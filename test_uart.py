@@ -23,27 +23,32 @@ def waitForPcbData():
         else:
             pass
  
-def sendAT_Cmd(serInstance, atCmdStr, waitforOk):
-   # print("Command: %s" % atCmdStr)
-    serInstance.write(atCmdStr.encode('utf-8'))   # atCmdStr 波特率
-    # or define b'string',bytes should be used not str
+# def sendAT_Cmd(serInstance, atCmdStr, waitforOk):
+#    # print("Command: %s" % atCmdStr)
+#     serInstance.write(atCmdStr.encode('utf-8'))   # atCmdStr 波特率
+#     # or define b'string',bytes should be used not str
  
-    if (waitforOk == 1):
-        waitForCmdOKRsp()
-    else:
-        waitForCmdRsp()
- 
+#     if (waitforOk == 1):
+#         waitForCmdOKRsp()
+#     else:
+#         waitForCmdRsp()
 
-plist = list(serial.tools.list_ports.comports())
- 
-if len(plist) <= 0:
-    print("没有发现端口!")
-else:
-    plist_0 = list(plist[0])
-    serialName = plist_0[0]       #先自动检测串口， 检测到可用串口，取出串口名
-    print("可用端口>>>",serialName)
- 
-ser = serial.Serial(serialName, 115200, timeout=1)  # timeout=1s
-print("已连接端口>>>", ser.name,"波特率115200")
-waitForPcbData()
-ser.close()
+"""主函数"""
+if __name__ == "__main__":
+    plist = list(serial.tools.list_ports.comports())
+    
+    if len(plist) <= 0:
+        print("没有发现端口!")
+    else:
+        plist_0 = list(plist[0])
+        serialName = plist_0[0]       #先自动检测串口， 检测到可用串口，取出串口名
+        print("可用端口>>>",serialName)
+     
+    try:
+        ser = serial.Serial(serialName, 115200, timeout=1)  # timeout=1s
+        print("已连接端口>>>", ser.name,"波特率115200")
+    except:
+        print("串口连接失败，请拔下串口重试，并且检查设置！")
+    waitForPcbData()
+    ser.close()
+    print("串口已断开连接")
