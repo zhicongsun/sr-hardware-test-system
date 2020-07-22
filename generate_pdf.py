@@ -16,10 +16,8 @@ pdfmetrics.registerFont(TTFont('pingbold', 'msyh.ttf'))
 
 # 生成PDF文件
 class PDFGenerator:
-    def __init__(self, pcb_data):
+    def __init__(self):
         #规定格式规范
-        self.pcb_data=pcb_data
-        self.filename = self.pcb_data[0]['report_code']
         self.file_path = ''#当前文件夹
         self.title_style = ParagraphStyle(name="TitleStyle", fontName="pingbold", fontSize=48, alignment=TA_LEFT,)
         self.sub_title_style = ParagraphStyle(name="SubTitleStyle", fontName="pingbold", fontSize=32,
@@ -53,9 +51,11 @@ class PDFGenerator:
                                       ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
                                       ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
                                      ])
-        self.genTaskPDF()
+        # self.genTaskPDF()#放在这里，生成对象的同时会直接生成Pdf
 
-    def genTaskPDF(self):
+    def genTaskPDF(self,pcb_data):
+        self.pcb_data=pcb_data
+        self.filename = self.pcb_data[0]['report_code']
         story = []
         # 首页内容
         story.append(Spacer(1, 20 * mm))
@@ -87,7 +87,7 @@ class PDFGenerator:
         # PCB测试数据
         story.append(Paragraph("PCB测试数据", self.table_title_style))
         story.append(Spacer(1, 3 * mm))
-        task_table = Table(pcb_data[1:], colWidths=[40 * mm, 141 * mm], rowHeights=12 * mm, style=self.common_style)
+        task_table = Table(self.pcb_data[1:], colWidths=[40 * mm, 141 * mm], rowHeights=12 * mm, style=self.common_style)
         story.append(task_table)
 
         story.append(Spacer(1, 10 * mm))
@@ -111,5 +111,6 @@ if __name__ == "__main__":
                     ['pcb_numb','20200722001']
                 ]
     #PDF类，读取产品数据并生成PDF
-    PDFGenerator(pcb_data)
+    test_pdf = PDFGenerator()
+    test_pdf.genTaskPDF(pcb_data)
 
