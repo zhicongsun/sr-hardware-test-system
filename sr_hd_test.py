@@ -4,46 +4,6 @@ Created on Tue Jul 21 15:07:58 2020
 
 @author: SZC
 """
-"""GUI界面的类"""
-import tkinter as tk
-from tkinter import ttk
-
-class SrTestGUI:
-    def __init__(self,type):
-        #加载窗口
-        self.top = tk.Tk()
-        self.top.title('SR测试工具')
-        screenwidth = self.top.winfo_screenwidth()
-        screenheight = self.top.winfo_screenheight()
-        alignstr = '%dx%d' % (screenwidth,screenheight) 
-        self.top.geometry(alignstr)
-        self.top.resizable(width=True,height=True)
-        
-        #加载label 1
-        self.label1_var = tk.StringVar()
-        self.label1_bg = tk.StringVar()
-        self.label1_bg = 'blue'
-        self.label1_var.set('等待测试')
-        self.label1 = ttk.Label(self.top,textvariable=self.label1_var,background=self.label1_bg)
-        self.label1.pack()
-
-        #加载button 1
-        button1 = tk.Button(self.top,text='测试按钮',font=('Arial', 12), width=10, height=1, command=self.button1_func)
-        button1.pack()
-        
-        #运行界面
-        # readpcbdata = ReadPcbData()#开始读PCB信息
-        # readpcbdata.waitForPcbData()
-        # self.top.mainloop()
-        
-
-    def button1_func(self,type):
-        #按下button1的响应函数
-        # self.label1_var.set('测试成功')
-        self.label1["text"] = '测试成功'
-        self.label1["background"] = 'red'
-        type.genTaskPDF()
-
 
 """生成PDF的类"""
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak, Table, TableStyle
@@ -54,14 +14,11 @@ from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 pdfmetrics.registerFont(TTFont('pingbold', 'msyh.ttf'))
-#pdfmetrics.registerFont(TTFont('ping', 'ping.ttf'))
-#pdfmetrics.registerFont(TTFont('hv', 'Helvetica.ttf'))
 
 # 生成PDF文件
 class PDFGenerator:
-    def __init__(self, filename):
-        self.filename = filename
-        # self.file_path = '/xxx/xxx/xxx/xxx/'
+    def __init__(self):
+        #规定格式规范
         self.file_path = ''#当前文件夹
         self.title_style = ParagraphStyle(name="TitleStyle", fontName="pingbold", fontSize=48, alignment=TA_LEFT,)
         self.sub_title_style = ParagraphStyle(name="SubTitleStyle", fontName="pingbold", fontSize=32,
@@ -95,10 +52,10 @@ class PDFGenerator:
                                       ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
                                       ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
                                      ])
-
-#    def genTaskPDF(self, home_data, task_data, basic_data, case_set_data, fail_case_data, p0_case_data):
-#        story = []
-    def genTaskPDF(self, home_data,task_data,basic_data):
+        
+    def genTaskPDF(self,pcb_data):
+        self.pcb_data=pcb_data
+        self.filename = self.pcb_data[0]['report_code']
         story = []
         # 首页内容
         story.append(Spacer(1, 20 * mm))
@@ -110,12 +67,12 @@ class PDFGenerator:
         story.append(Spacer(1, 10 * mm))
         story.append(Paragraph("测试报告", self.title_style))
         story.append(Spacer(1, 20 * mm))
-        story.append(Paragraph("Test Report of XXX", self.sub_title_style))
+        story.append(Paragraph("Test Report of PCB", self.sub_title_style))
         story.append(Spacer(1, 45 * mm))
-        story.append(Paragraph("报告编号：" + home_data['report_code'], self.content_style))
-        story.append(Paragraph("计划名称：" + home_data['task_name'], self.content_style))
-        story.append(Paragraph("报告日期：" + home_data['report_date'], self.content_style))
-        story.append(Paragraph(" 负责人：" + home_data['report_creator'], self.content_style))
+        story.append(Paragraph("报告编号：" + self.pcb_data[0]['report_code'], self.content_style))
+        story.append(Paragraph("测试名称：" + self.pcb_data[0]['task_name'], self.content_style))
+        story.append(Paragraph("报告日期：" + self.pcb_data[0]['report_date'], self.content_style))
+        story.append(Paragraph(" 测试人：" + self.pcb_data[0]['report_creator'], self.content_style))
         story.append(Spacer(1, 55 * mm))
         story.append(Paragraph("内部文档，请勿外传", self.foot_style))
         story.append(PageBreak())
@@ -127,50 +84,134 @@ class PDFGenerator:
         body_style.fontName = 'pingbold'
         body_style.fontSize = 12
 
-        # 测试计划
-        story.append(Paragraph("测试计划", self.table_title_style))
+        # PCB测试数据
+        story.append(Paragraph("PCB测试数据", self.table_title_style))
         story.append(Spacer(1, 3 * mm))
-        task_table = Table(task_data, colWidths=[25 * mm, 141 * mm], rowHeights=12 * mm, style=self.common_style)
+        task_table = Table(self.pcb_data[1:], colWidths=[40 * mm, 141 * mm], rowHeights=12 * mm, style=self.common_style)
         story.append(task_table)
 
         story.append(Spacer(1, 10 * mm))
-
-        # 基础参数
-        story.append(Paragraph("基础参数", self.sub_table_style))
-        basic_table = Table(basic_data, colWidths=[25*mm, 61*mm, 25*mm, 55*mm], rowHeights=12 * mm, style=self.basic_style)
-        story.append(basic_table)
-
-        story.append(Spacer(1, 10 * mm))
-#
-#        # 测试用例集
-#        story.append(Paragraph("用例集参数", self.sub_table_style))
-#        case_set_table = Table(case_set_data, colWidths=[25 * mm, 141 * mm], rowHeights=12 * mm, style=self.common_style)
-#        story.append(case_set_table)
-#
-#        # story.append(PageBreak())
-#        story.append(Spacer(1, 15 * mm))
-#
-#        # 失败用例--使用可以自动换行的方式需要data里都是str类型的才OK
-#        story.append(Paragraph("失败用例", self.table_title_style))
-#        story.append(Spacer(1, 3 * mm))
-#        para_fail_case_data = [[Paragraph(cell, body_style) for cell in row] for row in fail_case_data]
-#        fail_case_table = Table(para_fail_case_data, colWidths=[20 * mm, 35 * mm, 91 * mm, 20 * mm])
-#        fail_case_table.setStyle(self.common_style)
-#        story.append(fail_case_table)
-#
-#        story.append(Spacer(1, 15 * mm))
-#
-#        # 基础用例（P0）
-#        story.append(Paragraph("基础用例（P0）", self.table_title_style))
-#        story.append(Spacer(1, 3 * mm))
-#        para_p0_case_data = [[Paragraph(cell, body_style) for cell in row] for row in p0_case_data]
-#        p0_case_table = Table(para_p0_case_data, colWidths=[20 * mm, 35 * mm, 91 * mm, 20 * mm])
-#        p0_case_table.setStyle(self.common_style)
-#        story.append(p0_case_table)
-
         doc = SimpleDocTemplate(self.file_path + self.filename + ".pdf",
                                 leftMargin=20 * mm, rightMargin=20 * mm, topMargin=20 * mm, bottomMargin=20 * mm)
         doc.build(story)
+        print('已经生成PDF，文件名为 %s.pdf，请查看！' % self.pcb_data[0]['report_code'])
+        
+"""GUI界面的类"""
+import tkinter as tk
+from tkinter import ttk
+
+class SrTestGUI:
+    def __init__(self,type,pcb_data):
+        #加载窗口
+        self.top = tk.Tk()
+        self.top.title('SR测试工具')
+        screenwidth = self.top.winfo_screenwidth()
+        screenheight = self.top.winfo_screenheight()
+        alignstr = '%dx%d' % (screenwidth/4,screenheight/4) 
+        self.top.geometry(alignstr)
+        self.top.resizable(width=True,height=True)
+        
+        #加载label 1
+        self.label1_var = tk.StringVar()
+        self.label1_bg = tk.StringVar()
+        self.label1_bg = 'blue'
+        self.label1_var.set('扫描枪状态')
+        self.label1 = ttk.Label(self.top,textvariable=self.label1_var,background=self.label1_bg)
+        self.label1.grid(row=0,column=0)
+
+        #加载label 2
+        self.label2_var = tk.StringVar()
+        self.label2_bg = tk.StringVar()
+        self.label2_bg = 'grey'
+        self.label2_var.set('未连接')
+        self.label2 = ttk.Label(self.top,textvariable=self.label2_var,background=self.label2_bg)
+        self.label2.grid(row=0,column=1)
+        
+        #加载label 3
+        self.label3_var = tk.StringVar()
+        self.label3_bg = tk.StringVar()
+        self.label3_bg = 'blue'
+        self.label3_var.set("PCB版本")
+        self.label3 = ttk.Label(self.top,textvariable=self.label3_var,background=self.label3_bg)
+        self.label3.grid(row=1,column=0)
+        
+        #加载label 4
+        self.label4_var = tk.StringVar()
+        self.label4_bg = tk.StringVar()
+        self.label4_bg = 'grey'
+        self.label4_var.set("V0.1")
+        self.label4 = ttk.Label(self.top,textvariable=self.label4_var,background=self.label4_bg)
+        self.label4.grid(row=1,column=1)
+        
+        #加载label 5
+        self.label5_var = tk.StringVar()
+        self.label5_bg = tk.StringVar()
+        self.label5_bg = 'blue'
+        self.label5_var.set("是否合格")
+        self.label5 = ttk.Label(self.top,textvariable=self.label5_var,background=self.label5_bg)
+        self.label5.grid(row=2,column=0)
+        
+        #加载label 6
+        self.label6_var = tk.StringVar()
+        self.label6_bg = tk.StringVar()
+        self.label6_bg = 'grey'
+        self.label6_var.set("是")
+        self.label6 = ttk.Label(self.top,textvariable=self.label6_var,background=self.label6_bg)
+        self.label6.grid(row=2,column=1)
+        
+        #加载label 7
+        self.label7_var = tk.StringVar()
+        self.label7_bg = tk.StringVar()
+        self.label7_bg = 'blue'
+        self.label7_var.set("固件版本")
+        self.label7 = ttk.Label(self.top,textvariable=self.label7_var,background=self.label7_bg)
+        self.label7.grid(row=3,column=0)
+        
+        #加载label 8
+        self.label8_var = tk.StringVar()
+        self.label8_bg = tk.StringVar()
+        self.label8_bg = 'grey'
+        self.label8_var.set("V1.1.0")
+        self.label8 = ttk.Label(self.top,textvariable=self.label8_var,background=self.label8_bg)
+        self.label8.grid(row=3,column=1)
+        
+        #加载label 9
+        self.label9_var = tk.StringVar()
+        self.label9_bg = tk.StringVar()
+        self.label9_bg = 'blue'
+        self.label9_var.set("检测人员")
+        self.label9 = ttk.Label(self.top,textvariable=self.label9_var,background=self.label9_bg)
+        self.label9.grid(row=4,column=0)
+        
+        #加载label 10
+        self.label10_var = tk.StringVar()
+        self.label10_bg = tk.StringVar()
+        self.label10_bg = 'grey'
+        self.label10_var.set("SRUser")
+        self.label10 = ttk.Label(self.top,textvariable=self.label10_var,background=self.label10_bg)
+        self.label10.grid(row=4,column=1)
+        
+        #加载label 11
+        self.label11_var = tk.StringVar()
+        self.label11_bg = tk.StringVar()
+        self.label11_bg = 'grey'
+        self.label11_var.set("请连接扫码枪！")
+        self.label11 = ttk.Label(self.top,textvariable=self.label11_var,background=self.label11_bg)
+        self.label11.grid(row=1,column=2)
+        
+        #加载button 1
+        button1 = tk.Button(self.top,text='生成PDF',font=('Arial', 12), width=10, height=1, command = lambda:self.button1_func(type,pcb_data))
+        button1.grid(row=2,column=2)        
+
+    def button1_func(self,type,pcb_data):
+        #按下button1的响应函数
+        # self.label11_var.set('已生成PDF，请查看！')
+        self.label11["text"] = '已生成PDF，请查看！'
+        self.label11["background"] = 'red'
+        type.genTaskPDF(pcb_data)
+
+
+
         
 """串口读取的类"""
 import serial
@@ -190,60 +231,61 @@ class ReadPcbData:
             serialName = plist_0[0]       #先自动检测串口， 检测到可用串口，取出串口名
             print("可用端口>>>",serialName)
             self.ser = serial.Serial(serialName, 115200, timeout=1)#1s
-            print("已连接端口>>>", self.ser.name,"波特率115200")
+            print("已连接端口>>>", self.ser.name,"波特率115200")        
+            
     def waitForPcbData(self): 
-        while True:
-            self.line = self.ser.readline()#读取一行数据
-            if len(self.line) !=0:#有数据则输出
-                print("Rsponse : %s" % self.line.decode('utf-8'))  #串口接收到数据，然后显示
-            else:
-                pass
-
-    # def sendAT_Cmd(self,serInstance, atCmdStr, waitforOk):
-    #    # print("Command: %s" % atCmdStr)
-    #     serInstance.write(atCmdStr.encode('utf-8'))   # atCmdStr 波特率
-    #     # or define b'string',bytes should be used not str
-     
-    #     if (waitforOk == 1):
-    #         waitForCmdOKRsp()
-    #     else:
-    #         waitForCmdRsp()
-    
+        # while True:
+        #     self.line = self.ser.readline()#读取一行数据
+        #     if len(self.line) !=0:#有数据则输出
+        #         print("Rsponse : %s" % self.line.decode('utf-8'))  #串口接收到数据，然后显示
+        #         flag = True
+        #     else:
+        #         flag = False
+        #         pass
+        flag=[0,0]
+        self.line = self.ser.readline()#读取一行数据
+        if len(self.line) !=0:#有数据则输出
+            print("Rsponse : %s" % self.line.decode('utf-8'))  #串口接收到数据，然后显示
+            flag[0] = True
+        else:
+            flag[0] = False
+            pass
+        flag[1]=self.line
+        return flag
 
        
 """主函数"""
 if __name__ == "__main__":
     import threading
+    pcb_data = [
+            {'report_code': '20200722001', 
+              'task_name':'第四代电气PCB测试',
+              'report_date':'2020.7.22',
+              'report_creator':'SRUser'},
+                ['user_name','SRUser'],
+                ['pcb_version','V0.1'],
+                ['qualified_or_not','True'],
+                ['firmwave_version','V1.1.0'],
+                ['pcb_numb','20200722001']
+            ]
+    test_pdf = PDFGenerator()
     
-    home_data = {'report_code': '1', 
-           'task_name':'扫描器测试',
-           'report_date':'2020.7.17',
-           'report_creator':'SZC'
-          }
-    task_data = [
-                    ['计划ID','1']
-                ]
-    basic_data = [
-                    ['测试ID','1'],
-                    ['测试ID','2','测试','3']
-                ]
+    srgui = SrTestGUI(test_pdf,pcb_data)#GUI初始配置
     
-    test = PDFGenerator("Szc_Work2")
-    test.genTaskPDF(home_data,task_data,basic_data)
-    srgui = SrTestGUI(test)#GUI初始配置
     readpcbdata = ReadPcbData()#开启串口并连接
-    # def rungui():
-    #     srgui.top.mainloop()
-    #     while True:
-    #         pass
-    def runuart():
-        readpcbdata.waitForPcbData()
-        if len(readpcbdata.line) != 0:
-            print('666')
-            srgui.label1["text"] = "666"
-    # t1 = threading.Thread(target=rungui)
-    t2 = threading.Thread(target=runuart)
-    # t1.start()
+    
+    def runuart(type,pcb_data):
+        while True:
+            recevied_data = readpcbdata.waitForPcbData()
+            if recevied_data[0] is True:
+                type.label2_var.set("已连接！")
+                # type.label4_var.set(pcb_data[2][1])
+                type.label4_var.set(recevied_data[1])
+                #直接赋值的话没有改变对象本身的属性，因为传入参数为形参
+                # type.label2["text"] = "已连接！"
+                # type.label4["text"] = pcb_data[2][1] #显示pcb版本信息
+            
+    t2 = threading.Thread(target=runuart,args=(srgui,pcb_data,))
     t2.start()
     srgui.top.mainloop()
     
