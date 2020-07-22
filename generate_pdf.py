@@ -94,7 +94,7 @@ class PDFGenerator:
         doc = SimpleDocTemplate(self.file_path + self.filename + ".pdf",
                                 leftMargin=20 * mm, rightMargin=20 * mm, topMargin=20 * mm, bottomMargin=20 * mm)
         doc.build(story)
-        print('已经生成PDF，请查看！')
+        print('已经生成PDF，文件名为 %s.pdf，请查看！' % self.pcb_data[0]['report_code'])
 
 """主程序"""
 #获得的产品数据
