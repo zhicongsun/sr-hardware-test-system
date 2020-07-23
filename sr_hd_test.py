@@ -55,7 +55,9 @@ class PDFGenerator:
         
     def genTaskPDF(self,pcb_data):
         self.pcb_data=pcb_data
-        self.filename = self.pcb_data[0]['report_code']
+        # self.filename = self.pcb_data[0]['report_code']#编号
+        self.filename = str(self.pcb_data[2][1])#二维码数据
+        
         story = []
         # 首页内容
         story.append(Spacer(1, 20 * mm))
@@ -99,6 +101,7 @@ class PDFGenerator:
 """GUI界面的类"""
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 
 class SrTestGUI:
     #调用了pcb_data全局变量
@@ -120,7 +123,7 @@ class SrTestGUI:
         self.label1_bg = 'blue'
         self.label1_var.set('扫描枪状态')
         self.label1 = ttk.Label(self.top,textvariable=self.label1_var,background=self.label1_bg)
-        self.label1.grid(row=0,column=0)
+        self.label1.grid(row=0,column=0,sticky = tk.W+tk.E)
 
         #加载label 2
         self.label2_var = tk.StringVar()
@@ -128,7 +131,7 @@ class SrTestGUI:
         self.label2_bg = 'grey'
         self.label2_var.set('未连接')
         self.label2 = ttk.Label(self.top,textvariable=self.label2_var,background=self.label2_bg)
-        self.label2.grid(row=0,column=1)
+        self.label2.grid(row=0,column=1,sticky = tk.W+tk.E)
         
         #加载label 3
         self.label3_var = tk.StringVar()
@@ -136,7 +139,7 @@ class SrTestGUI:
         self.label3_bg = 'blue'
         self.label3_var.set("PCB版本")
         self.label3 = ttk.Label(self.top,textvariable=self.label3_var,background=self.label3_bg)
-        self.label3.grid(row=1,column=0)
+        self.label3.grid(row=1,column=0,sticky = tk.W+tk.E)
         
         #加载label 4
         self.label4_var = tk.StringVar()
@@ -144,7 +147,7 @@ class SrTestGUI:
         self.label4_bg = 'grey'
         self.label4_var.set("none")
         self.label4 = ttk.Label(self.top,textvariable=self.label4_var,background=self.label4_bg)
-        self.label4.grid(row=1,column=1)
+        self.label4.grid(row=1,column=1,sticky = tk.W+tk.E)
         
         #加载label 5
         self.label5_var = tk.StringVar()
@@ -152,7 +155,7 @@ class SrTestGUI:
         self.label5_bg = 'blue'
         self.label5_var.set("是否合格")
         self.label5 = ttk.Label(self.top,textvariable=self.label5_var,background=self.label5_bg)
-        self.label5.grid(row=2,column=0)
+        self.label5.grid(row=2,column=0,sticky = tk.W+tk.E)
         
         #加载label 6
         self.label6_var = tk.StringVar()
@@ -160,7 +163,7 @@ class SrTestGUI:
         self.label6_bg = 'grey'
         self.label6_var.set("未知")
         self.label6 = ttk.Label(self.top,textvariable=self.label6_var,background=self.label6_bg)
-        self.label6.grid(row=2,column=1)
+        self.label6.grid(row=2,column=1,sticky = tk.W+tk.E)
         
         #加载label 7
         self.label7_var = tk.StringVar()
@@ -168,7 +171,7 @@ class SrTestGUI:
         self.label7_bg = 'blue'
         self.label7_var.set("固件版本")
         self.label7 = ttk.Label(self.top,textvariable=self.label7_var,background=self.label7_bg)
-        self.label7.grid(row=3,column=0)
+        self.label7.grid(row=3,column=0,sticky = tk.W+tk.E)
         
         #加载label 8
         self.label8_var = tk.StringVar()
@@ -176,7 +179,7 @@ class SrTestGUI:
         self.label8_bg = 'grey'
         self.label8_var.set("none")
         self.label8 = ttk.Label(self.top,textvariable=self.label8_var,background=self.label8_bg)
-        self.label8.grid(row=3,column=1)
+        self.label8.grid(row=3,column=1,sticky = tk.W+tk.E)
         
         #加载label 9
         self.label9_var = tk.StringVar()
@@ -184,7 +187,7 @@ class SrTestGUI:
         self.label9_bg = 'blue'
         self.label9_var.set("检测人员")
         self.label9 = ttk.Label(self.top,textvariable=self.label9_var,background=self.label9_bg)
-        self.label9.grid(row=4,column=0)
+        self.label9.grid(row=4,column=0,sticky = tk.W+tk.E)
         
         #加载label 10
         self.label10_var = tk.StringVar()
@@ -192,19 +195,19 @@ class SrTestGUI:
         self.label10_bg = 'grey'
         self.label10_var.set("SRUser")
         self.label10 = ttk.Label(self.top,textvariable=self.label10_var,background=self.label10_bg)
-        self.label10.grid(row=4,column=1)
+        self.label10.grid(row=4,column=1,sticky = tk.W+tk.E)
         
         #加载label 11
         self.label11_var = tk.StringVar()
         self.label11_bg = tk.StringVar()
-        self.label11_bg = 'grey'
+        self.label11_bg = 'yellow'
         self.label11_var.set("请连接扫码枪！")
         self.label11 = ttk.Label(self.top,textvariable=self.label11_var,background=self.label11_bg)
-        self.label11.grid(row=1,column=4)
+        self.label11.grid(row=5,column=0,columnspan=100,sticky = tk.W+tk.E)
         
         #加载button 1
-        button1 = tk.Button(self.top,text='生成PDF',font=('Arial', 12), width=10, height=1, command = self.button1_func)
-        button1.grid(row=2,column=4)        
+        button1 = tk.Button(self.top,text='生成PDF并写入数据库', command = self.button1_func)
+        button1.grid(row=6,column=0,columnspan=100,sticky = tk.W+tk.E)        
         self.refresh_data()
 
     def button1_func(self):
@@ -215,6 +218,7 @@ class SrTestGUI:
         self.label11_var.set('已生成PDF，请查看！')
         self.label11["background"] = 'red'
         test_pdf.genTaskPDF(pcb_data)
+        write_database(pcb_data)
         
     def refresh_data(self):
         global pcb_data
@@ -303,12 +307,51 @@ class ReadPcbData:
     
     def is_connected(self):#判断端口是否硬件连接
         return len(list(serial.tools.list_ports.comports()))
+
+"""数据库写入函数"""
+import pymysql
+def write_database(pcb_data):
+    try:
+        db = pymysql.connect("localhost","root","SR2020","sr_test")
+        print("已连接数据库sr_test")
+    except:
+        print("连接数据库sr_test失败，以下操作无效，请检查设置")
+    cursor = db.cursor()
     
-    
+    sql = """INSERT INTO `sr_test`.`pcb_data` 
+            (`user_name`, `pcb_version`, `qualified_or_not`, `firmware_version`, `pcb_numb`) 
+             VALUES (%s, %s, %s, %s, %s)"""
+    sr_user_name = pcb_data[1][1]
+    sr_pcb_version = pcb_data[2][1]
+    sr_qualified_or_not = pcb_data[3][1]
+    sr_firmware_version = pcb_data[4][1]
+    sr_pcb_numb = pcb_data[5][1]
+    values = (sr_user_name,sr_pcb_version,sr_qualified_or_not,sr_firmware_version,sr_pcb_numb)
+    try:
+        cursor.execute(sql,values)
+        db.commit()
+        print("成功向表pcb_data中插入数据")
+    except:
+        db.rollback()
+        print("向表pcb_data插入数据失败")
+    try:
+        db.close()
+        print("已断开与数据库sr_test的连接")
+    except:
+        print("断开连接失败，请检查设置")
+        
+def runuart():
+    global pcb_data
+    global readpcbdata
+    global thread_destroy_flag
+    while thread_destroy_flag:
+        recevied_data = readpcbdata.waitForPcbData()
+        if recevied_data[0] is True:
+            pcb_data[2][1] = recevied_data[1]
 """主函数"""
 if __name__ == "__main__":
     import threading
-    
+    thread_destroy_flag = True
     pcb_data = [ #初始化数据
         {'report_code': 'none', 
           'task_name':'第四代电气PCB测试',
@@ -325,15 +368,15 @@ if __name__ == "__main__":
     readpcbdata.connect_uart()
     srgui = SrTestGUI()#生成GUI实例，规定样式
     
-    def runuart(type):
-        global pcb_data
-        while True:
-            recevied_data = readpcbdata.waitForPcbData()
-            if recevied_data[0] is True:
-                pcb_data[2][1] = recevied_data[1]
-    
-    t2 = threading.Thread(target=runuart,args=(srgui,))
+    t2 = threading.Thread(target=runuart)
     t2.start()
+    def on_closing():
+        global thread_destroy_flag
+        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            thread_destroy_flag = False
+            srgui.top.destroy()
+
+    srgui.top.protocol("WM_DELETE_WINDOW", on_closing)
     srgui.top.mainloop()
     
         
