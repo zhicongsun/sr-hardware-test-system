@@ -2,7 +2,7 @@
 """
 Created on Fri Jul 17 16:56:43 2020
 
-@author: Wenfei
+@author: SZC
 """
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet
