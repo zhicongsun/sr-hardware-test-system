@@ -13,10 +13,21 @@ import re
  
 import serial.tools.list_ports
  
-
+# def waitForPcbData(self): 
+#     #非循环模式，只读取一行数据，需要在循环中调用该函数
+#     flag=[0,0]
+#     self.line = self.ser.readline()#读取一行数据
+#     if len(self.line) !=0:#有数据则输出
+#         print("Rsponse : %s" % self.line.decode('utf-8'))  #串口接收到数据，然后显示
+#         flag[0] = True
+#     else:
+#         flag[0] = False
+#         pass
+#     flag[1]=self.line
+#     return flag
 def waitForPcbData(): 
+    #调用函数即可，循环接收一行数据
     while True:
-
         line = ser.readline()                              #读取一行数据
         if len(line) !=0:
             print("Rsponse : %s" % line.decode('utf-8'))  #串口接收到数据，然后显示
