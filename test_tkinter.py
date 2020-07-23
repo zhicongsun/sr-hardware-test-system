@@ -109,7 +109,7 @@ class SrTestGUI:
         #加载button 1
         button1 = tk.Button(self.top,text='测试按钮',font=('Arial', 12), width=10, height=1, command=self.button1_func)
         button1.grid(row=2,column=2)
-        
+        self.refresh_data()
         #运行界面
         self.top.mainloop()
 
@@ -118,6 +118,11 @@ class SrTestGUI:
         # self.label1_var.set('测试成功')
         self.label10["text"] = 'hhhhhhh'
         self.label10["background"] = 'red'
+    def refresh_data(self):
+        print("测试刷新中")
+        self.label2_var.set("测试刷新")
+        self.label2["background"] = 'red'
+        self.top.after(1000,self.refresh_data)
 
 Sr=SrTestGUI()
 
