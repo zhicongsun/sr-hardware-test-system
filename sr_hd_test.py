@@ -101,7 +101,10 @@ import tkinter as tk
 from tkinter import ttk
 
 class SrTestGUI:
-    def __init__(self,type,pcb_data):
+    #调用了pcb_data全局变量
+    #调用了串口实例获得状态信息
+    #调用了PDF实例执行生成PDF的操作
+    def __init__(self):
         #加载窗口
         self.top = tk.Tk()
         self.top.title('SR测试工具')
@@ -139,7 +142,7 @@ class SrTestGUI:
         self.label4_var = tk.StringVar()
         self.label4_bg = tk.StringVar()
         self.label4_bg = 'grey'
-        self.label4_var.set("V0.1")
+        self.label4_var.set("none")
         self.label4 = ttk.Label(self.top,textvariable=self.label4_var,background=self.label4_bg)
         self.label4.grid(row=1,column=1)
         
@@ -155,7 +158,7 @@ class SrTestGUI:
         self.label6_var = tk.StringVar()
         self.label6_bg = tk.StringVar()
         self.label6_bg = 'grey'
-        self.label6_var.set("是")
+        self.label6_var.set("未知")
         self.label6 = ttk.Label(self.top,textvariable=self.label6_var,background=self.label6_bg)
         self.label6.grid(row=2,column=1)
         
@@ -171,7 +174,7 @@ class SrTestGUI:
         self.label8_var = tk.StringVar()
         self.label8_bg = tk.StringVar()
         self.label8_bg = 'grey'
-        self.label8_var.set("V1.1.0")
+        self.label8_var.set("none")
         self.label8 = ttk.Label(self.top,textvariable=self.label8_var,background=self.label8_bg)
         self.label8.grid(row=3,column=1)
         
@@ -197,22 +200,46 @@ class SrTestGUI:
         self.label11_bg = 'grey'
         self.label11_var.set("请连接扫码枪！")
         self.label11 = ttk.Label(self.top,textvariable=self.label11_var,background=self.label11_bg)
-        self.label11.grid(row=1,column=2)
+        self.label11.grid(row=1,column=4)
         
         #加载button 1
-        button1 = tk.Button(self.top,text='生成PDF',font=('Arial', 12), width=10, height=1, command = lambda:self.button1_func(type,pcb_data))
-        button1.grid(row=2,column=2)        
+        button1 = tk.Button(self.top,text='生成PDF',font=('Arial', 12), width=10, height=1, command = self.button1_func)
+        button1.grid(row=2,column=4)        
+        self.refresh_data()
 
-    def button1_func(self,type,pcb_data):
+    def button1_func(self):
         #按下button1的响应函数
-        # self.label11_var.set('已生成PDF，请查看！')
-        self.label11["text"] = '已生成PDF，请查看！'
+        # self.label11["text"] = '已生成PDF，请查看！'#直接赋值方式不推荐
+        global pcb_data #使用全局变量，按下按钮时获取的pcb_data是最新的数据
+        global test_pdf
+        self.label11_var.set('已生成PDF，请查看！')
         self.label11["background"] = 'red'
-        type.genTaskPDF(pcb_data)
-
-
-
+        test_pdf.genTaskPDF(pcb_data)
         
+    def refresh_data(self):
+        # self.label2_var.set("测试刷新")
+        # self.label2["background"] = 'red'
+        global pcb_data
+        global readpcbdata #使用全局变量调用串口实例
+        #扫描枪状态
+        if readpcbdata.is_connected_flag == True:
+            self.label2_var.set("已连接")
+            self.label11_var.set("请扫描PCB二维码")
+            self.label2["background"] = 'red'
+        else:
+            self.label2_var.set("未连接")
+            self.label2["background"] = 'grey'
+        #PCB版本
+        if pcb_data[2][1] != 'none':
+            self.label11_var.set("收到PCB二维码数据！")
+            self.label4_var.set(pcb_data[2][1])
+            self.label4["background"] = 'red'
+        else:
+            self.label4_var.set("none")
+            self.label4["background"] = 'grey'
+        self.top.after(2000,self.refresh_data)
+
+
 """串口读取的类"""
 import serial
 import sys
@@ -230,18 +257,17 @@ class ReadPcbData:
             plist_0 = list(plist[0])
             serialName = plist_0[0]       #先自动检测串口， 检测到可用串口，取出串口名
             print("可用端口>>>",serialName)
-            self.ser = serial.Serial(serialName, 115200, timeout=1)#1s
-            print("已连接端口>>>", self.ser.name,"波特率115200")        
+            try:
+                self.ser = serial.Serial(serialName, 115200, timeout=1)#1s
+                self.is_connected_flag = True
+                print("已连接端口>>>", self.ser.name,"波特率115200")        
+            except:
+                self.is_connected_flag = False
+                print("发现端口，但连接失败")
+
             
     def waitForPcbData(self): 
-        # while True:
-        #     self.line = self.ser.readline()#读取一行数据
-        #     if len(self.line) !=0:#有数据则输出
-        #         print("Rsponse : %s" % self.line.decode('utf-8'))  #串口接收到数据，然后显示
-        #         flag = True
-        #     else:
-        #         flag = False
-        #         pass
+        #每次调用只读取一行数据，需要在循环中调用才可以一直接收
         flag=[0,0]
         self.line = self.ser.readline()#读取一行数据
         if len(self.line) !=0:#有数据则输出
@@ -252,40 +278,51 @@ class ReadPcbData:
             pass
         flag[1]=self.line
         return flag
-
+    # def is_connected(self):
+    #     return self.is_connected_flag
        
 """主函数"""
 if __name__ == "__main__":
     import threading
-    pcb_data = [
-            {'report_code': '20200722001', 
-              'task_name':'第四代电气PCB测试',
-              'report_date':'2020.7.22',
-              'report_creator':'SRUser'},
-                ['user_name','SRUser'],
-                ['pcb_version','V0.1'],
-                ['qualified_or_not','True'],
-                ['firmwave_version','V1.1.0'],
-                ['pcb_numb','20200722001']
-            ]
-    test_pdf = PDFGenerator()
+    # pcb_data = [
+    #         {'report_code': '20200722001', 
+    #           'task_name':'第四代电气PCB测试',
+    #           'report_date':'2020.7.22',
+    #           'report_creator':'SRUser'},
+    #             ['user_name','SRUser'],
+    #             ['pcb_version','V0.1'],
+    #             ['qualified_or_not','True'],
+    #             ['firmwave_version','V1.1.0'],
+    #             ['pcb_numb','20200722001']
+    #         ]
+    pcb_data = [ #初始化数据
+        {'report_code': 'none', 
+          'task_name':'第四代电气PCB测试',
+          'report_date':'none',
+          'report_creator':'SRUser'},
+            ['user_name','SRUser'],
+            ['pcb_version','none'],
+            ['qualified_or_not','none'],
+            ['firmwave_version','none'],
+            ['pcb_numb','none']
+        ]
+    test_pdf = PDFGenerator()#生成PDF实例，规定PDF格式
+    readpcbdata = ReadPcbData()#生成串口实例，连接串口
+    srgui = SrTestGUI()#生成GUI实例，规定样式
     
-    srgui = SrTestGUI(test_pdf,pcb_data)#GUI初始配置
-    
-    readpcbdata = ReadPcbData()#开启串口并连接
-    
-    def runuart(type,pcb_data):
+    def runuart(type):
+        global pcb_data
         while True:
             recevied_data = readpcbdata.waitForPcbData()
             if recevied_data[0] is True:
-                type.label2_var.set("已连接！")
-                # type.label4_var.set(pcb_data[2][1])
-                type.label4_var.set(recevied_data[1])
+                # type.label11_var.set("收到PCB二维码数据！")
+                pcb_data[2][1] = recevied_data[1]
+                
                 #直接赋值的话没有改变对象本身的属性，因为传入参数为形参
                 # type.label2["text"] = "已连接！"
                 # type.label4["text"] = pcb_data[2][1] #显示pcb版本信息
-            
-    t2 = threading.Thread(target=runuart,args=(srgui,pcb_data,))
+    
+    t2 = threading.Thread(target=runuart,args=(srgui,))
     t2.start()
     srgui.top.mainloop()
     
