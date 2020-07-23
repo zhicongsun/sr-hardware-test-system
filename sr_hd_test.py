@@ -217,12 +217,10 @@ class SrTestGUI:
         test_pdf.genTaskPDF(pcb_data)
         
     def refresh_data(self):
-        # self.label2_var.set("测试刷新")
-        # self.label2["background"] = 'red'
         global pcb_data
         global readpcbdata #使用全局变量调用串口实例
         #扫描枪状态
-        if readpcbdata.is_connected_flag == True:
+        if readpcbdata.connect_flag == True:
             self.label2_var.set("已连接")
             self.label11_var.set("请扫描PCB二维码")
             self.label2["background"] = 'red'
@@ -237,64 +235,80 @@ class SrTestGUI:
         else:
             self.label4_var.set("none")
             self.label4["background"] = 'grey'
-        self.top.after(2000,self.refresh_data)
+        self.top.after(500,self.refresh_data)
 
-
-"""串口读取的类"""
-import serial
-import sys
-import os
-import time
-import re
+    
+"""串口的类"""
+import serial 
 import serial.tools.list_ports
  
 class ReadPcbData:
-    def __init__(self):#生成类的时候就自动连接串口
+    def __init__(self):
+        self.connect_flag = True
+        self.hd_flag = [0,0]#硬件连接标志位
+        print("init the ReadPcbData")
+        
+    def waitForPcbData(self): 
+        #调用函数即可，循环接收一行数据
+        # while True:
+        data=[0,0]
+        if (self.is_connected()):#判断端口是否硬件连接
+            self.hd_flag[1] = 1
+            try:#硬件连接时，接受数据
+                
+                self.line = self.ser.readline()                              #读取一行数据
+                if len(self.line) !=0:
+                    print("Rsponse : %s" % self.line.decode('utf-8'))  #串口接收到数据，然后显示
+                    data[0] = True
+                else:
+                    data[0] = False
+                    pass
+                data[1] = self.line
+            except: #情况一：读取数据时被硬件拔掉
+                    #情况二：拔掉，重新硬件连接上后，还未软件连接
+                if self.connect_uart()==False:
+                    print("接受数据时串口被拔下！")
+                else:
+                    print("端口重连成功！")
+
+        else:#无硬件连接，原有的软件连接关闭
+            self.hd_flag[1]=0
+            try:#尝试关闭软件连接
+                self.ser.close()
+            except:#第一次端口就未连接，则没有串口实例,会出现异常
+                pass
+            if (self.hd_flag[0]==1 and self.hd_flag[1]==0):#检测第一次硬件拔掉的下降沿，该字符只显示一次
+                print("端口硬件未连接！软件连接已关闭！")
+        self.hd_flag[0] = self.hd_flag[1]
+        return data
+
+    
+    def connect_uart(self):
         plist = list(serial.tools.list_ports.comports())
-        if len(plist) <= 0:
+        if len(plist) <= 0:#判断端口是否硬件连接
             print("没有发现端口!")
-        else:
+            self.connect_flag = False
+        else:#已硬件连接，尝试软件连接
             plist_0 = list(plist[0])
             serialName = plist_0[0]       #先自动检测串口， 检测到可用串口，取出串口名
             print("可用端口>>>",serialName)
-            try:
-                self.ser = serial.Serial(serialName, 115200, timeout=1)#1s
-                self.is_connected_flag = True
-                print("已连接端口>>>", self.ser.name,"波特率115200")        
-            except:
-                self.is_connected_flag = False
-                print("发现端口，但连接失败")
-
-            
-    def waitForPcbData(self): 
-        #每次调用只读取一行数据，需要在循环中调用才可以一直接收
-        flag=[0,0]
-        self.line = self.ser.readline()#读取一行数据
-        if len(self.line) !=0:#有数据则输出
-            print("Rsponse : %s" % self.line.decode('utf-8'))  #串口接收到数据，然后显示
-            flag[0] = True
-        else:
-            flag[0] = False
-            pass
-        flag[1]=self.line
-        return flag
-    # def is_connected(self):
-    #     return self.is_connected_flag
-       
+            try:#尝试软件连接
+                self.ser = serial.Serial(serialName, 115200, timeout=1)  # timeout=1s
+                print("已连接端口>>>", self.ser.name,"波特率115200")
+                self.connect_flag = True
+            except:#软件连接失败，原因未知，插拔重试
+                print("尝试连接端口失败，请拔下重试，并且检查设置！")
+                self.connect_flag = False
+        return self.connect_flag
+    
+    def is_connected(self):#判断端口是否硬件连接
+        return len(list(serial.tools.list_ports.comports()))
+    
+    
 """主函数"""
 if __name__ == "__main__":
     import threading
-    # pcb_data = [
-    #         {'report_code': '20200722001', 
-    #           'task_name':'第四代电气PCB测试',
-    #           'report_date':'2020.7.22',
-    #           'report_creator':'SRUser'},
-    #             ['user_name','SRUser'],
-    #             ['pcb_version','V0.1'],
-    #             ['qualified_or_not','True'],
-    #             ['firmwave_version','V1.1.0'],
-    #             ['pcb_numb','20200722001']
-    #         ]
+    
     pcb_data = [ #初始化数据
         {'report_code': 'none', 
           'task_name':'第四代电气PCB测试',
@@ -307,7 +321,8 @@ if __name__ == "__main__":
             ['pcb_numb','none']
         ]
     test_pdf = PDFGenerator()#生成PDF实例，规定PDF格式
-    readpcbdata = ReadPcbData()#生成串口实例，连接串口
+    readpcbdata = ReadPcbData()#生成串口实例
+    readpcbdata.connect_uart()
     srgui = SrTestGUI()#生成GUI实例，规定样式
     
     def runuart(type):
@@ -315,12 +330,7 @@ if __name__ == "__main__":
         while True:
             recevied_data = readpcbdata.waitForPcbData()
             if recevied_data[0] is True:
-                # type.label11_var.set("收到PCB二维码数据！")
                 pcb_data[2][1] = recevied_data[1]
-                
-                #直接赋值的话没有改变对象本身的属性，因为传入参数为形参
-                # type.label2["text"] = "已连接！"
-                # type.label4["text"] = pcb_data[2][1] #显示pcb版本信息
     
     t2 = threading.Thread(target=runuart,args=(srgui,))
     t2.start()
