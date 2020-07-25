@@ -12,7 +12,7 @@ from NiceLabel.SDK import *
 sdkFilesPath = 'C:\\Program Files\\NiceLabel\\NiceLabel 2019\\bin.net'
 PrintEngineFactory.SDKFilesPath = sdkFilesPath
 PrintEngineFactory.PrintEngine.Initialize()
-label = PrintEngineFactory.PrintEngine.OpenLabel("SimpleSample1.lbl")
+label = PrintEngineFactory.PrintEngine.OpenLabel("SimpleSample1.nlbl")
 print(label)
 label.Variables["Name"].SetValue("SZC")
 label.Variables["Company"].SetValue("SZC")
