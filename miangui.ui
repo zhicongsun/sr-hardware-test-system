@@ -94,7 +94,7 @@
    </property>
    <property name="styleSheet">
     <string notr="true">background-color: rgb(231, 231, 231);
-color: rgb(4, 4, 4);</string>
+color: rgb(255, 0, 0);</string>
    </property>
    <property name="text">
     <string>请连接扫描枪！</string>
@@ -109,7 +109,7 @@ color: rgb(4, 4, 4);</string>
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
-     <x>410</x>
+     <x>650</x>
      <y>70</y>
      <width>391</width>
      <height>331</height>
