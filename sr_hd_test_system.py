@@ -4,9 +4,9 @@ Created on Tue Jul 28 09:48:35 2020
 
 @author: SZC
 """
-###################################
+##############################################################################################################
 #       QtGUI界面
-###################################
+##############################################################################################################
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -248,7 +248,7 @@ class Ui_Dialog(object):
         self.textBrowser.setObjectName("textBrowser")
         self.progressBar = QtWidgets.QProgressBar(Dialog)
         self.progressBar.setGeometry(QtCore.QRect(440, 260, 361, 23))
-        self.progressBar.setProperty("value", 24)
+        self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName("progressBar")
         self.label = QtWidgets.QLabel(Dialog)
         self.label.setGeometry(QtCore.QRect(310, 0, 221, 51))
@@ -500,9 +500,9 @@ class Ui_Dialog(object):
         self.label4.setText(_translate("Dialog", "None"))
         self.groupBox.setTitle(_translate("Dialog", "硬件信息"))
         
-###################################
+##############################################################################################################
 #       PDF类
-###################################
+##############################################################################################################
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Table, TableStyle
 from reportlab.platypus import Image as reportImage
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
@@ -597,9 +597,9 @@ class PDFGenerator:
         doc.build(story)
         print('已经生成PDF，文件名为 %s.pdf，请查看！' % self.pcb_data[2][1])
 
-###################################
+##############################################################################################################
 #       串口类
-###################################
+##############################################################################################################
 import serial 
 import serial.tools.list_ports
  
@@ -665,9 +665,9 @@ class ReadPcbData:
     def is_connected(self):#判断端口是否硬件连接
         return len(list(serial.tools.list_ports.comports()))
 
-###################################
+##############################################################################################################
 #       数据库写入函数
-###################################
+##############################################################################################################
 import pymysql
 def write_database(pcb_data):
     try:
@@ -699,9 +699,9 @@ def write_database(pcb_data):
     except:
         print("断开连接失败，请检查设置")
 
-###################################
+##############################################################################################################
 #       串口任务
-###################################
+##############################################################################################################
 def runuart():
     global pcb_data
     global readpcbdata
@@ -710,9 +710,9 @@ def runuart():
         recevied_data = readpcbdata.waitForPcbData()
         if recevied_data[0] is True:
             pcb_data[2][1] = recevied_data[1]
-###################################
+##############################################################################################################
 #       二维码打印函数
-###################################
+##############################################################################################################
 import win32print
 import win32ui
 from PIL import Image, ImageWin
@@ -798,40 +798,38 @@ def print_barcode(imgname):
     hDC.EndDoc ()
     hDC.DeleteDC ()
 
+##############################################################################################################
+#       主界面的类
+##############################################################################################################
 class MainWindow(QMainWindow,Ui_MainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
         self.mBtnLogin.clicked.connect(self.onLoginClick)
+        self.mBtnCancel.clicked.connect(self.onCancelClick)
         #一定要在主窗口类的初始化函数中对子窗口进行实例化，如果在其他函数中实例化子窗口
         #可能会出现子窗口闪退的问题
         self.ChildDialog = ChildWin()
    
     def onLoginClick(self):
-        # print('打开子窗口！')
+        admin_name = self.mTextUserName.text()
+        password = self.mTextPassword.text()
+        is_admin_or_not = is_admin(admin_name,password)
+        if is_admin_or_not[0] == True:
+            # QMessageBox.information(None, "登录提示", "用户名：" + admin_name + "密码：" + password, QMessageBox.Ok, QMessageBox.Ok)
+            self.close()
+            self.ChildDialog.show()
+        else:
+            QMessageBox.information(None, "登录提示", is_admin_or_not[1], QMessageBox.Ok, QMessageBox.Ok)
+            pass
+    def onCancelClick(self):
         self.close()
-        self.ChildDialog.show()
-        #连接信号
-        # self.ChildDialog._signal.connect(self.getData)
-    # def closeEvent(self, event):
-    #     # 创建一个消息盒子（提示框）
-    #     quitMsgBox = QMessageBox()
-    #     # 设置提示框的标题
-    #     quitMsgBox.setWindowTitle('确认窗口')
-    #     # 设置提示框的内容
-    #     quitMsgBox.setText('你确定退出吗？')
-    #     # 创建两个点击的按钮，修改文本显示内容
-    #     buttonY = QPushButton('确定')
-    #     buttonN = QPushButton('取消')
-    #     # 将两个按钮加到这个消息盒子中去，并指定yes和no的功能
-    #     quitMsgBox.addButton(buttonY, QMessageBox.YesRole)
-    #     quitMsgBox.addButton(buttonN, QMessageBox.NoRole)
-    #     quitMsgBox.exec_()
-    #     # 判断返回值，如果点击的是Yes按钮，我们就关闭组件和应用，否则就忽略关闭事件
-    #     if quitMsgBox.clickedButton() == buttonY:
-    #         event.accept()
-    #     else:
-    #         event.ignore()
+
+        
+
+##############################################################################################################
+#       子界面的类
+##############################################################################################################
 class ChildWin(QMainWindow, Ui_Dialog):
     #定义信号
     _signal = QtCore.pyqtSignal(str)
@@ -854,11 +852,6 @@ class ChildWin(QMainWindow, Ui_Dialog):
         test_pdf.genTaskPDF(pcb_data)
         write_database(pcb_data)
         print_barcode(pcb_data[2][1])
-#         a = "ffff"
-#         self.label4.setText(_translate("Dialog", a))
-#         self.label4.setStyleSheet("color: rgb(255, 255, 255);\n"
-# "background-color: red;\n"
-# "")
         
     def mytimer(self):
         timer = QTimer(self)
@@ -869,28 +862,46 @@ class ChildWin(QMainWindow, Ui_Dialog):
         global pcb_data
         global readpcbdata #使用全局变量调用串口实例
         _translate = QtCore.QCoreApplication.translate
+
         #扫描枪状态
         if readpcbdata.connect_flag == True:
             self.label2.setText(_translate("Dialog", "已连接"))
             self.label2.setStyleSheet("color: white;\n"
                 "background-color: red;")
-            self.label11.setText(_translate("Dialog", "请扫描PCB二维码"))
         else:
             self.label2.setText(_translate("Dialog", "未连接"))
             self.label2.setStyleSheet("background-color: rgb(231, 231, 231);\n"
                 "color: rgb(4, 4, 4);")
-            self.label11.setText(_translate("Dialog", "请连接扫码枪"))
-        #PCB版本
-        if pcb_data[2][1] != 'none':
+         #控制器版本
+        if pcb_data[2][1] != 'None':
             self.label4.setText(_translate("Dialog", pcb_data[2][1]))
             self.label4.setStyleSheet("color: white;\n"
                 "background-color: red;")
-            self.label11.setText(_translate("Dialog", "收到PCB二维码数据！"))
         else:
             self.label4.setText(_translate("Dialog", "None"))
             self.label4.setStyleSheet("background-color: rgb(231, 231, 231);\n"
                 "color: rgb(4, 4, 4);")
+
+        #提示界面的信息
+        if readpcbdata.connect_flag != True:
             self.label11.setText(_translate("Dialog", "请连接扫码枪"))
+        elif (readpcbdata.connect_flag == True) and (pcb_data[2][1] == "None"):
+            self.label11.setText(_translate("Dialog", "请扫描控制器的二维码"))
+        elif (readpcbdata.connect_flag == True) and (pcb_data[2][1] != "None") and(pcb_data[4][1] =="None"):
+            self.label11.setText(_translate("Dialog", "请烧写测试固件"))
+        elif (readpcbdata.connect_flag == True) and (pcb_data[2][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[3][1] == "None"):
+            self.label11.setText(_translate("Dialog", "已烧写测试固件，等待测试结果"))
+        elif (readpcbdata.connect_flag == True) and (pcb_data[2][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[3][1] == "False"):
+            self.label11.setText(_translate("Dialog", "控制器不合格，请点按钮生成报告与二维码"))
+        elif ((readpcbdata.connect_flag == True) and (pcb_data[2][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[3][1] == "True") 
+             and (pcb_data[5][1] == "None")):
+            self.label11.setText(_translate("Dialog", "控制器合格，请烧录功能固件"))
+        elif ((readpcbdata.connect_flag == True) and (pcb_data[2][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[3][1] == "True") 
+             and (pcb_data[5][1] != "None")):
+            self.label11.setText(_translate("Dialog", "功能固件已烧录，请点按钮生成报告与SN码"))
+        else: 
+            self.label11.setText(_translate("Dialog", "程序逻辑出错，请联系开发人员"))
+
         
     def closeEvent(self, event):
         # 创建一个消息盒子（提示框）
@@ -911,20 +922,64 @@ class ChildWin(QMainWindow, Ui_Dialog):
             event.accept()
         else:
             event.ignore()
-
+##############################################################################################################
+#       通过数据库判断是否为管理员
+##############################################################################################################
+import pymysql
+def is_admin(admin_name,password):#通过数据库判断是否未管理员，是则返回True,否则返回False
+    try:
+        db = pymysql.connect("localhost","root","SR2020","sr_test")
+        print("已连接数据库sr_test")
+    except:
+        print("连接数据库sr_test失败，以下操作无效，请检查设置")
+    cursor = db.cursor()
+    search_cmd = """select * from sr_test.administrators_data"""
+    cursor.execute(search_cmd)
+    admin_data = cursor.fetchall()
+    each_result = []*len(admin_data)
+    allow_open  =  [None,"None"]    
+    for i in range(len(admin_data)):
+        each_result.append((admin_name in admin_data[i]))
+    result = True in each_result
+    print(each_result)
+    
+    if result == True:
+        id_admin = each_result.index(True)#记录是哪个用户
+        print("用户 %s 存在" %admin_name)
+        if password == admin_data[id_admin][1]:#判断密码是否正确
+            allow_open[0] = True
+            print("用户 %s 密码正确" % admin_name)
+            allow_open[1] = "你好管理员"
+        else:
+            allow_open[0] = False
+            print("用户 %s 密码错误" % admin_name)
+            allow_open[1]="用户存在，密码错误"
+    else:
+        print("用户不存在")
+        allow_open[1] = "用户不存在"
+    
+    try:
+        db.close()
+        print("已断开与数据库sr_test的连接")
+    except:
+        print("断开连接失败，请检查设置")
+    return allow_open
+##############################################################################################################
+#       主函数
+##############################################################################################################
 if __name__ == "__main__":
     import threading
     thread_destroy_flag = True
     pcb_data = [ #初始化数据
-        {'report_code': 'none', 
+        {'report_code': 'None', 
          'task_name':'第四代电气PCB测试',
-         'report_date':'none',
+         'report_date':'None',
          'report_creator':'SRUser'},
         ['user_name','SRUser'],
-        ['pcb_version','none'],
-        ['qualified_or_not','none'],
-        ['firmwave_version','none'],
-        ['pcb_numb','none']
+        ['pcb_version','None'],
+        ['qualified_or_not','None'],
+        ['firmwave_version','None'],
+        ['pcb_numb','None']
     ]
     test_pdf = PDFGenerator()#生成PDF实例，规定PDF格式
     readpcbdata = ReadPcbData()#生成串口实例
@@ -932,7 +987,6 @@ if __name__ == "__main__":
 
     app = QApplication(sys.argv) 
     mainwindow = MainWindow()
-    # childwindow = ChildWin()
     t2 = threading.Thread(target=runuart)
     t2.start()
 
