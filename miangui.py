@@ -251,6 +251,7 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+        Dialog.show()
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -278,7 +279,7 @@ class Ui_Dialog(object):
         
         #我的代码
         self.pushButton1.clicked.connect(self.onButton1Click) 
-        Dialog.show()
+
     def onButton1Click(self):
         _translate = QtCore.QCoreApplication.translate
         self.label4.setText(_translate("Dialog", "哈哈哈哈"))
