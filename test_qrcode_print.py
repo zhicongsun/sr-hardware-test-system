@@ -8,7 +8,6 @@ Created on Mon Jul 27 09:30:13 2020
 import win32print
 import win32ui
 from PIL import Image, ImageWin
-
 import qrcode
 import os
 
