@@ -835,10 +835,28 @@ class ChildWin(QMainWindow, Ui_Dialog):
     _signal = QtCore.pyqtSignal(str)
     def __init__(self):
         super(ChildWin, self).__init__()
+        
+        bar=self.menuBar()
+        #向菜单栏中添加新的QMenu对象，父菜单
+        helpbar=bar.addMenu('Help')
+        helpbar.addAction('Help Document')
+        about = helpbar.addMenu('About')
+        about.addAction('Version')
+        
+
+        #单击任何Qmenu对象，都会发射信号，绑定槽函数
+        helpbar.triggered[QAction].connect(self.processtrigger)
+        
         self.setupUi(self)
         self.retranslateUi(self)
         self.connect_event()
         self.mytimer()
+        
+    def processtrigger(self,q):
+        #输出那个Qmenu对象被点击
+        print(q.text()+'is triggeres')
+        if q.text() == "Version":
+            pass
         
     def connect_event(self):
         self.pushButton1.clicked.connect(self.onButton1Click) 
