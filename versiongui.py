@@ -7,8 +7,12 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+import sys
 
-class Ui_dialog(object):
+class Ui_version_dialog(object):
     def setupUi(self, dialog):
         dialog.setObjectName("dialog")
         dialog.resize(563, 430)
@@ -106,3 +110,16 @@ class Ui_dialog(object):
         self.label_8.setText(_translate("dialog", "Github: https://github.com/RadarSun/SR_work"))
 
 import version_rc
+
+class VersionWin(QMainWindow,Ui_version_dialog):
+    def __init__(self):
+        super(VersionWin, self).__init__()
+        self.setupUi(self)
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv) 
+    versionwin = VersionWin()
+
+    versionwin.show()
+    sys.exit(app.exec_())
+#pyrcc5 -o C:\Users\liuya\Desktop\SR_work\version_rc.py C:\Users\liuya\Desktop\SR_work\version.qrc
