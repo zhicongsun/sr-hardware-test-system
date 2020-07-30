@@ -775,7 +775,7 @@ def print_barcode(imgname):
     scaled_width, scaled_height = [int (scale * i) for i in bmp.size]
     scaled_width = int(scaled_width/2)
     scaled_height = int(scaled_height/2)
-    x1 = int ((printer_size[0] - scaled_width) / 3)+100
+    x1 = int ((printer_size[0] - scaled_width) / 3)+100 #二维码位置得自己调整
     y1 = int ((printer_size[1] - scaled_height) / 3)
     x2 = x1 + scaled_width
     y2 = y1 + scaled_height
@@ -866,8 +866,92 @@ def runuart():
         readpcbdata.ser.close()#得到线程结束标识，则关闭串口
     except:
         print("串口还没打开，不用重复关闭")
+##############################################################################################################
+#       CAN任务
+##############################################################################################################
+import PCANBasic
+from PCANBasic import *
 
-    
+class DriveCAN(PCANBasic):
+    def can_init(self,chanel=PCAN_USBBUS1,bautrate=PCAN_BAUD_500K): #默认参数：通道、波特率
+        # The Plug & Play Channel (PCAN-PCI) is initialized
+        result = self.Initialize(chanel, bautrate)
+        if result != PCAN_ERROR_OK:
+            # An error occurred, get a text describing the error and show it
+            result = self.GetErrorText(result)
+            print(result[1])
+        else:
+            print ("PCAN-USB (Ch-1) was initialized")
+
+    def can_filter(self,chanel=PCAN_USBBUS1,from_id=0,to_id=0x7FF,fileter_mode=PCAN_MODE_STANDARD): #默认参数：通道，起始id，结束id，滤波器模式（标准）
+        #  The message filter is closed first to ensure the reception of the new range of IDs.
+        result = self.SetValue(PCAN_USBBUS1,PCAN_MESSAGE_FILTER,PCAN_FILTER_CLOSE)
+        if result != PCAN_ERROR_OK:
+            # An error occurred, get a text describing the error and show it
+            result = self.GetErrorText(result)
+            print(result[1])
+        else:
+            # The message filter is configured to receive the IDs 2,3,4 and 5 on the PCAN-USB, Channel 1
+            result = self.FilterMessages(chanel,from_id,to_id,fileter_mode)
+            if result != PCAN_ERROR_OK:
+                # An error occurred, get a text describing the error and show it
+                result = objPCAN.GetErrorText(result)
+                print(result[1])
+            else:
+                print("Filter successfully configured for IDs from %d to %d" % (from_id,to_id))
+
+    def can_read(self,chanel=PCAN_USBBUS1): #默认参数：通道
+         # All initialized channels are released
+        readResult = PCAN_ERROR_OK,
+        while (readResult[0] & PCAN_ERROR_QRCVEMPTY) != PCAN_ERROR_QRCVEMPTY:
+            # Check the receive queue for new messages
+            readResult = self.Read(chanel)
+            if readResult[0] != PCAN_ERROR_QRCVEMPTY:
+                # Process the received message
+                # print("A message was received")
+                print("id = %x data=[%x %x %x %x %x %x %x %x]" 
+                      % (readResult[1].ID,
+                          readResult[1].DATA[0], 
+                          readResult[1].DATA[1], 
+                          readResult[1].DATA[2],
+                          readResult[1].DATA[3],
+                          readResult[1].DATA[4],
+                          readResult[1].DATA[5],
+                          readResult[1].DATA[6],
+                          readResult[1].DATA[7]))
+                # ProcessMessage(result[1],result[2]) # Possible processing function, ProcessMessage(msg,timestamp)
+            else:
+                # An error occurred, get a text describing the error and show it
+                result = objPCAN.GetErrorText(readResult[0])
+                # print(result[1])
+                # HandleReadError(readResult[0]) # Possible errors handling function, HandleError(function_result)
+
+    def can_write(self,chanel=PCAN_USBBUS1,msg_type=PCAN_MESSAGE_STANDARD,frame_id=0x100,send_data=[1,2,3,4]): #默认参数：通道，帧类型（标准），帧id，发送数据（列表）
+        msg = TPCANMsg()
+        msg.ID = frame_id
+        msg.MSGTYPE = PCAN_MESSAGE_STANDARD
+        msg.LEN = len(send_data)
+        for i in range(0,msg.LEN): #从0到len-1,如果发送数据有5位，则是0到4
+            msg.DATA[i] = send_data[i]
+        
+        #  The message is sent using the PCAN-USB Channel 1
+        result = self.Write(chanel,msg)
+        if result != PCAN_ERROR_OK:
+            # An error occurred, get a text describing the error and show it
+            result = self.GetErrorText(result)
+            print(result)
+        else:
+            print("Message sent successfully")
+def runcan():
+    global objPCAN
+    global can_thread_destroy_flag
+    while can_thread_destroy_flag:
+        objPCAN.can_read()
+    try:
+        objPCAN.Uninitialize(PCAN_NONEBUS)
+    except:
+        print("已经关闭can口，不用重新关闭")
+   
 ##############################################################################################################
 #       数据库写入函数
 ##############################################################################################################
@@ -978,6 +1062,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def closeEvent(self, event):
         global uart_thread_destroy_flag
+        global can_thread_destroy_flag
         if self.exit_flag == "x":
             # 创建一个消息盒子（提示框）
             quitMsgBox = QMessageBox()
@@ -995,7 +1080,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             # 判断返回值，如果点击的是Yes按钮，我们就关闭组件和应用，否则就忽略关闭事件
             if quitMsgBox.clickedButton() == buttonY:
                 uart_thread_destroy_flag = False
-                print("关闭GUI的时候关闭串口")
+                can_thread_destroy_flag = False
+                print("关闭GUI的时候关闭串口和CAN")
                 event.accept()
             else:
                 event.ignore()
@@ -1094,6 +1180,7 @@ class ChildWin(QMainWindow, Ui_Dialog):
         
     def closeEvent(self, event):
         global uart_thread_destroy_flag
+        global can_thread_destroy_flag
         # 创建一个消息盒子（提示框）
         quitMsgBox = QMessageBox()
         # 设置提示框的标题
@@ -1110,7 +1197,8 @@ class ChildWin(QMainWindow, Ui_Dialog):
         # 判断返回值，如果点击的是Yes按钮，我们就关闭组件和应用，否则就忽略关闭事件
         if quitMsgBox.clickedButton() == buttonY:
             uart_thread_destroy_flag = False
-            print("关闭GUI的时候关闭串口")
+            can_thread_destroy_flag = False
+            print("关闭GUI的时候关闭串口和CAN")
             event.accept()
         else:
             event.ignore()
@@ -1152,6 +1240,7 @@ def stop_thread(thread):
 if __name__ == "__main__":
     import threading
     uart_thread_destroy_flag = True
+    can_thread_destroy_flag = True
     pcb_data = [ #初始化数据
         {'report_code': 'None', 
          'task_name':'第四代电气PCB测试',
@@ -1163,14 +1252,25 @@ if __name__ == "__main__":
         ['firmwave_version','None'],
         ['pcb_numb','None']
     ]
+
     test_pdf = PDFGenerator()#生成PDF实例，规定PDF格式
+
     readpcbdata = ReadPcbData()#生成串口实例
     readpcbdata.connect_uart()
 
+    objPCAN = DriveCAN()#CAN实例
+    objPCAN.can_init()
+    objPCAN.can_filter()
+
     app = QApplication(sys.argv) 
     mainwindow = MainWindow()
-    t2 = threading.Thread(target=runuart)#守护线程
-    t2.start()
+
+    uart_thread = threading.Thread(target=runuart)#守护线程
+    uart_thread.start()
+    
+    can_thread = threading.Thread(target=runcan)#守护线程
+    can_thread.start()
+
     mainwindow.show()
     sys.exit(app.exec_())
     
