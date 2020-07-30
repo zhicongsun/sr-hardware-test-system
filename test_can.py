@@ -23,7 +23,7 @@ class DriveCAN(PCANBasic):
         readResult = PCAN_ERROR_OK,
         while (readResult[0] & PCAN_ERROR_QRCVEMPTY) != PCAN_ERROR_QRCVEMPTY:
             # Check the receive queue for new messages
-            readResult = objPCAN.Read(PCAN_USBBUS1)
+            readResult = self.Read(PCAN_USBBUS1)
             if readResult[0] != PCAN_ERROR_QRCVEMPTY:
                 # Process the received message
                 print("A message was received")
@@ -42,7 +42,24 @@ class DriveCAN(PCANBasic):
                 result = objPCAN.GetErrorText(readResult[0])
                 print(result[1])
                 # HandleReadError(readResult[0]) # Possible errors handling function, HandleError(function_result)
-                
+    def can_write(self):
+        msg = TPCANMsg()
+        msg.ID = 0x100
+        msg.MSGTYPE = PCAN_MESSAGE_STANDARD
+        msg.LEN = 3
+        msg.DATA[0] = 1
+        msg.DATA[1] = 2
+        msg.DATA[2] = 3
+        
+        #  The message is sent using the PCAN-USB Channel 1
+        result = self.Write(PCAN_USBBUS1,msg)
+        if result != PCAN_ERROR_OK:
+            # An error occurred, get a text describing the error and show it
+            result = self.GetErrorText(result)
+            print(result)
+        else:
+            print("Message sent successfully")
+
 if __name__ == "__main__":
     objPCAN = DriveCAN()
     objPCAN.can_init()
