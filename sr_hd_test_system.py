@@ -616,7 +616,7 @@ pdfmetrics.registerFont(TTFont('pingbold', 'msyh.ttf'))
 class PDFGenerator:
     def __init__(self):
         #规定格式规范
-        self.file_path = ''#当前文件夹
+        self.file_path = './pdfs/'#当前文件夹
         self.title_style = ParagraphStyle(name="TitleStyle", fontName="pingbold", fontSize=48, alignment=TA_LEFT,)
         self.sub_title_style = ParagraphStyle(name="SubTitleStyle", fontName="pingbold", fontSize=32,
                                               textColor=colors.HexColor(0x666666), alignment=TA_LEFT, )
@@ -652,16 +652,15 @@ class PDFGenerator:
         
     def genTaskPDF(self,pcb_data):
         self.pcb_data=pcb_data
-        # self.filename = self.pcb_data[0]['report_code']#编号
-        print(self.pcb_data[2][1])
-        self.filename = self.pcb_data[2][1] #二维码数据
+        print(self.pcb_data[7][1])#用pcb_nub作为二维码数据
+        self.filename = self.pcb_data[7][1] 
         print(self.filename)
         story = []
         # 首页内容
         story.append(Spacer(1, 20 * mm))
-        imgofsr = reportImage('sr.png')
-        # img.drawHeight = 20 * mm
-        # img.drawWidth = 40 * mm
+        imgofsr = reportImage('sr_new.jpg')
+        imgofsr.drawHeight = 20 * mm
+        imgofsr.drawWidth = 100 * mm
         imgofsr.hAlign = TA_LEFT
         story.append(imgofsr)
         story.append(Spacer(1, 10 * mm))
@@ -687,14 +686,20 @@ class PDFGenerator:
         # PCB测试数据
         story.append(Paragraph("PCB测试数据", self.table_title_style))
         story.append(Spacer(1, 3 * mm))
-        task_table = Table(self.pcb_data[1:], colWidths=[40 * mm, 141 * mm], rowHeights=12 * mm, style=self.common_style)
+        task_table = Table(self.pcb_data[1:], colWidths=[60 * mm, 120 * mm], rowHeights=12 * mm, style=self.common_style)
         story.append(task_table)
 
-        story.append(Spacer(1, 10 * mm))
+        story.append(Spacer(1, 20 * mm))
+        img_uart_loss_rate = reportImage('./matplot_images/20200803001.png')
+        img_uart_loss_rate.drawHeight = 80 * mm
+        img_uart_loss_rate.drawWidth = 130 * mm
+        img_uart_loss_rate.hAlign = TA_LEFT
+        story.append(img_uart_loss_rate)
+
         doc = SimpleDocTemplate(self.file_path + self.filename + ".pdf",
                                 leftMargin=20 * mm, rightMargin=20 * mm, topMargin=20 * mm, bottomMargin=20 * mm)
         doc.build(story)
-        print('已经生成PDF，文件名为 %s.pdf，请查看！' % self.pcb_data[2][1])
+        print('已经生成PDF，文件名为 %s.pdf，请查看！' % self.pcb_data[7][1])#用pcb_num命名
 
 ##############################################################################################################
 #       二维码打印函数
@@ -848,7 +853,7 @@ def runuart():
     while uart_thread_destroy_flag:
         recevied_data = readpcbdata.waitForPcbData()
         if recevied_data[0] is True:
-            pcb_data[2][1] = recevied_data[1]
+            pcb_data[3][1] = recevied_data[1]#获取控制板（pcb）版本，对应pcb_data的pcb_version
     try:
         readpcbdata.ser.close()#得到线程结束标识，则关闭串口
     except:
@@ -972,14 +977,28 @@ def write_database(pcb_data):
     cursor = db.cursor()
     
     sql = """INSERT INTO `sr_test`.`pcb_data` 
-            (`user_name`, `pcb_version`, `qualified_or_not`, `firmware_version`, `pcb_numb`) 
-             VALUES (%s, %s, %s, %s, %s)"""
-    sr_user_name = pcb_data[1][1]
-    sr_pcb_version = pcb_data[2][1]
-    sr_qualified_or_not = pcb_data[3][1]
-    sr_firmware_version = pcb_data[4][1]
-    sr_pcb_numb = pcb_data[5][1]
-    values = (sr_user_name,sr_pcb_version,sr_qualified_or_not,sr_firmware_version,sr_pcb_numb)
+            (`admin_name`, `date_time`,`pcb_version`, `test_firmwave_version`,`qualified_or_not`, `func_firmwave_version`, 
+            `pcb_numb`,`io_din`,`io_dout`,`uart115200_packet_loss_rate`,`uart115200_error_rate`,
+            `uart115200_delay_time`,`can50k_packet_loss_rate`,`can50k_error_rate`) 
+             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+    sr_admin_name = pcb_data[1][1]
+    sr_date_time = pcb_data[2][1]
+    sr_pcb_version = pcb_data[3][1]
+    sr_test_firmwave_version = pcb_data[4][1]
+    sr_qualified_or_not = pcb_data[5][1]
+    sr_func_firmware_version = pcb_data[6][1]
+    sr_pcb_numb = pcb_data[7][1]
+    sr_io_din = pcb_data[8][1]
+    sr_io_dout = pcb_data[9][1]
+    sr_uart115200_packet_loss_rate = pcb_data[10][1]
+    sr_uart115200_error_rate = pcb_data[11][1]
+    sr_uart115200_delay_time = pcb_data[12][1]
+    sr_can50k_packet_loss_rate = pcb_data[13][1]
+    sr_can50k_error_rate = pcb_data[14][1]
+
+    values = (sr_admin_name,sr_date_time,sr_pcb_version,sr_test_firmwave_version,sr_qualified_or_not,sr_func_firmware_version,
+    sr_pcb_numb,sr_io_din,sr_io_dout,sr_uart115200_packet_loss_rate,sr_uart115200_error_rate,sr_uart115200_delay_time,
+    sr_can50k_packet_loss_rate,sr_can50k_error_rate)
     try:
         cursor.execute(sql,values)
         db.commit()
@@ -998,6 +1017,7 @@ def write_database(pcb_data):
 ##############################################################################################################
 import pymysql
 def is_admin(admin_name,password):#通过数据库判断是否未管理员，是则返回True,否则返回False
+    global pcb_data
     try:
         db = pymysql.connect("localhost","root","SR2020","sr_test")
         print("已连接数据库sr_test")
@@ -1020,6 +1040,7 @@ def is_admin(admin_name,password):#通过数据库判断是否未管理员，是
         if password == admin_data[id_admin][1]:#判断密码是否正确
             allow_open[0] = True
             print("用户 %s 密码正确" % admin_name)
+            pcb_data[1][1] = admin_name#为数据库的pcb_data的管理员名字赋值
             allow_open[1] = "你好管理员"
         else:
             allow_open[0] = False
@@ -1097,6 +1118,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 ##############################################################################################################
 #       操作界面的类
 ##############################################################################################################
+import datetime
+
 class ChildWin(QMainWindow, Ui_Dialog):
     #定义信号
     def __init__(self):
@@ -1130,10 +1153,20 @@ class ChildWin(QMainWindow, Ui_Dialog):
         global pcb_data
         global test_pdf
         _translate = QtCore.QCoreApplication.translate
+
+        now = datetime.datetime.now()
+        pcb_data[2][1] = now.strftime("%Y-%m-%d-%H-%M")#为数据库pcb_data的date_time赋值
+        pcb_data[7][1] = pcb_data[2][1]+'001'#获取当时时间作为该控制板编号，为数据库pcb_data的pcb_numb赋值
+        #封面内容赋值
+        pcb_data[0]['report_code'] = pcb_data[7][1] 
+        pcb_data[0]['task_name'] = '第四代电气PCB测试'
+        pcb_data[0]['report_date'] = pcb_data[2][1]
+        pcb_data[0]['report_creator'] = pcb_data[1][1]
+
+        test_pdf.genTaskPDF(pcb_data)#生成PDF
         self.label11.setText(_translate("Dialog", "已生成PDF,写入数据库，生成二维码，请查看"))
-        test_pdf.genTaskPDF(pcb_data)
-        write_database(pcb_data)
-        print_barcode(pcb_data[2][1])
+        write_database(pcb_data)#写入数据库
+        print_barcode(pcb_data[7][1])#pcb_numb作为编号，生成二维码
         
     def mytimer(self):
         timer = QTimer(self)
@@ -1155,8 +1188,8 @@ class ChildWin(QMainWindow, Ui_Dialog):
             self.label2.setStyleSheet("background-color: rgb(231, 231, 231);\n"
                 "color: rgb(4, 4, 4);")
          #控制器版本
-        if pcb_data[2][1] != 'None':
-            self.label4.setText(_translate("Dialog", pcb_data[2][1]))
+        if pcb_data[3][1] != 'None':
+            self.label4.setText(_translate("Dialog", pcb_data[3][1]))
             self.label4.setStyleSheet("color: white;\n"
                 "background-color: red;")
         else:
@@ -1167,19 +1200,19 @@ class ChildWin(QMainWindow, Ui_Dialog):
         #提示界面的信息
         if readpcbdata.connect_flag != True:
             self.label11.setText(_translate("Dialog", "请连接扫码枪"))
-        elif (readpcbdata.connect_flag == True) and (pcb_data[2][1] == "None"):
+        elif (readpcbdata.connect_flag == True) and (pcb_data[3][1] == "None"):
             self.label11.setText(_translate("Dialog", "请扫描控制器的二维码"))
-        elif (readpcbdata.connect_flag == True) and (pcb_data[2][1] != "None") and(pcb_data[4][1] =="None"):
+        elif (readpcbdata.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] =="None"):
             self.label11.setText(_translate("Dialog", "请烧写测试固件"))
-        elif (readpcbdata.connect_flag == True) and (pcb_data[2][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[3][1] == "None"):
+        elif (readpcbdata.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "None"):
             self.label11.setText(_translate("Dialog", "已烧写测试固件，等待测试结果"))
-        elif (readpcbdata.connect_flag == True) and (pcb_data[2][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[3][1] == "False"):
+        elif (readpcbdata.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "False"):
             self.label11.setText(_translate("Dialog", "控制器不合格，请点按钮生成报告与二维码"))
-        elif ((readpcbdata.connect_flag == True) and (pcb_data[2][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[3][1] == "True") 
-             and (pcb_data[5][1] == "None")):
+        elif ((readpcbdata.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "True") 
+             and (pcb_data[6][1] == "None")):
             self.label11.setText(_translate("Dialog", "控制器合格，请烧录功能固件"))
-        elif ((readpcbdata.connect_flag == True) and (pcb_data[2][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[3][1] == "True") 
-             and (pcb_data[5][1] != "None")):
+        elif ((readpcbdata.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "True") 
+             and (pcb_data[6][1] != "None")):
             self.label11.setText(_translate("Dialog", "功能固件已烧录，请点按钮生成报告与SN码"))
         else: 
             self.label11.setText(_translate("Dialog", "程序逻辑出错，请联系开发人员"))
@@ -1250,14 +1283,23 @@ if __name__ == "__main__":
     can_thread_destroy_flag = True
     pcb_data = [ #初始化数据
         {'report_code': 'None', 
-         'task_name':'第四代电气PCB测试',
+         'task_name':'None',
          'report_date':'None',
-         'report_creator':'SRUser'},
-        ['user_name','SRUser'],
+         'report_creator':'None'},
+        ['admin_name','None'],
+        ['date_time','None'],
         ['pcb_version','None'],
+        ['test_firmwave_version','None'],
         ['qualified_or_not','None'],
-        ['firmwave_version','None'],
-        ['pcb_numb','None']
+        ['func_firmwave_version','None'],
+        ['pcb_numb','pcb_num111'],
+        ['io_din','None'],
+        ['io_dout','None'],
+        ['uart115200_packet_loss_rate','None'],
+        ['uart115200_error_rate','None'],
+        ['uart115200_delay_time','None'],
+        ['can50k_packet_loss_rate','None'],
+        ['can50k_error_rate','None']
     ]
 
     test_pdf = PDFGenerator()#生成PDF实例，规定PDF格式
