@@ -701,7 +701,7 @@ class PDFGenerator:
 ##############################################################################################################
 import win32print
 import win32ui
-from PIL import Image, ImageWin
+from PIL import Image, ImageWin,ImageDraw,ImageFont
 import qrcode
 import os
 
@@ -709,34 +709,28 @@ def print_barcode(imgname):
     img = qrcode.make(imgname)
     img_path = os.getcwd() + "/barcode/" + imgname + ".png"
     img.save(img_path)
-    #
+
+    ttfont = ImageFont.truetype("msyh.ttf",20) 
+    im = Image.open(img_path)
+    draw = ImageDraw.Draw(im)
+    draw.text((35,250),imgname, fill="#000000",font=ttfont)
+    im.save(img_path)
     # Constants for GetDeviceCaps
-    #
-    #
     # HORZRES / VERTRES = printable area
-    #
     HORZRES = 8
     VERTRES = 10
-    #
     # LOGPIXELS = dots per inch
-    #
     LOGPIXELSX = 88
     LOGPIXELSY = 90
-    #
     # PHYSICALWIDTH/HEIGHT = total area
-    #
     PHYSICALWIDTH = 110
     PHYSICALHEIGHT = 111
-    #
     # PHYSICALOFFSETX/Y = left / top margin
-    #
     PHYSICALOFFSETX = 112
     PHYSICALOFFSETY = 113
     
     printer_name = win32print.GetDefaultPrinter ()
     file_name = img_path
-    
-    #
     # You can only write a Device-independent bitmap
     #  directly to a Windows device context; therefore
     #  we need (for ease) to use the Python Imaging
@@ -744,30 +738,23 @@ def print_barcode(imgname):
     #
     # Create a device context from a named printer
     #  and assess the printable size of the paper.
-    #
     hDC = win32ui.CreateDC ()
     hDC.CreatePrinterDC (printer_name)
     printable_area = hDC.GetDeviceCaps (HORZRES), hDC.GetDeviceCaps (VERTRES)
     printer_size = hDC.GetDeviceCaps (PHYSICALWIDTH), hDC.GetDeviceCaps (PHYSICALHEIGHT)
     printer_margins = hDC.GetDeviceCaps (PHYSICALOFFSETX), hDC.GetDeviceCaps (PHYSICALOFFSETY)
-    
-    #
     # Open the image, rotate it if it's wider than
     #  it is high, and work out how much to multiply
     #  each pixel by to get it as big as possible on
     #  the page without distorting.
-    #
     bmp = Image.open (file_name)
     if bmp.size[0] > bmp.size[1]:
       bmp = bmp.rotate (90)
     
     ratios = [1.0 * printable_area[0] / bmp.size[0], 1.0 * printable_area[1] / bmp.size[1]]
     scale = min (ratios)
-    
-    #
     # Start the print job, and draw the bitmap to
     #  the printer device at the scaled size.
-    #
     hDC.StartDoc (file_name)
     hDC.StartPage ()
     
@@ -775,7 +762,7 @@ def print_barcode(imgname):
     scaled_width, scaled_height = [int (scale * i) for i in bmp.size]
     scaled_width = int(scaled_width/2)
     scaled_height = int(scaled_height/2)
-    x1 = int ((printer_size[0] - scaled_width) / 3)+100 #二维码位置得自己调整
+    x1 = int ((printer_size[0] - scaled_width) / 3)+100
     y1 = int ((printer_size[1] - scaled_height) / 3)
     x2 = x1 + scaled_width
     y2 = y1 + scaled_height
@@ -867,7 +854,7 @@ def runuart():
     except:
         print("串口还没打开，不用重复关闭")
 ##############################################################################################################
-#       CAN任务
+#       CAN类
 ##############################################################################################################
 import PCANBasic
 from PCANBasic import *
@@ -903,28 +890,44 @@ class DriveCAN(PCANBasic):
     def can_read(self,chanel=PCAN_USBBUS1): #默认参数：通道
          # All initialized channels are released
         readResult = PCAN_ERROR_OK,
-        while (readResult[0] & PCAN_ERROR_QRCVEMPTY) != PCAN_ERROR_QRCVEMPTY:
+        if (readResult[0] & PCAN_ERROR_QRCVEMPTY) != PCAN_ERROR_QRCVEMPTY:
             # Check the receive queue for new messages
             readResult = self.Read(chanel)
             if readResult[0] != PCAN_ERROR_QRCVEMPTY:
                 # Process the received message
-                # print("A message was received")
-                print("id = %x data=[%x %x %x %x %x %x %x %x]" 
-                      % (readResult[1].ID,
-                          readResult[1].DATA[0], 
-                          readResult[1].DATA[1], 
-                          readResult[1].DATA[2],
-                          readResult[1].DATA[3],
-                          readResult[1].DATA[4],
-                          readResult[1].DATA[5],
-                          readResult[1].DATA[6],
-                          readResult[1].DATA[7]))
+                # print("id = %x data=[%x %x %x %x %x %x %x %x]" 
+                #       % (readResult[1].ID,
+                #           readResult[1].DATA[0], 
+                #           readResult[1].DATA[1], 
+                #           readResult[1].DATA[2],
+                #           readResult[1].DATA[3],
+                #           readResult[1].DATA[4],
+                #           readResult[1].DATA[5],
+                #           readResult[1].DATA[6],
+                #           readResult[1].DATA[7]))
+                self.can_processmessage(readResult[1])
                 # ProcessMessage(result[1],result[2]) # Possible processing function, ProcessMessage(msg,timestamp)
             else:
                 # An error occurred, get a text describing the error and show it
                 result = objPCAN.GetErrorText(readResult[0])
                 # print(result[1])
                 # HandleReadError(readResult[0]) # Possible errors handling function, HandleError(function_result)
+        else:
+            pass
+    def can_processmessage(self,Result):
+        if Result.ID == 0x601:
+            print("id = %x data=[%x %x %x %x %x %x %x %x]" 
+                      % (Result.ID,
+                          Result.DATA[0], 
+                          Result.DATA[1], 
+                          Result.DATA[2],
+                          Result.DATA[3],
+                          Result.DATA[4],
+                          Result.DATA[5],
+                          Result.DATA[6],
+                          Result.DATA[7]))
+        else:
+            pass
 
     def can_write(self,chanel=PCAN_USBBUS1,msg_type=PCAN_MESSAGE_STANDARD,frame_id=0x100,send_data=[1,2,3,4]): #默认参数：通道，帧类型（标准），帧id，发送数据（列表）
         msg = TPCANMsg()
@@ -942,6 +945,9 @@ class DriveCAN(PCANBasic):
             print(result)
         else:
             print("Message sent successfully")
+##############################################################################################################
+#       CAN任务
+##############################################################################################################
 def runcan():
     global objPCAN
     global can_thread_destroy_flag
@@ -949,8 +955,9 @@ def runcan():
         objPCAN.can_read()
     try:
         objPCAN.Uninitialize(PCAN_NONEBUS)
+        print("成功关闭了CAN口")
     except:
-        print("已经关闭can口，不用重新关闭")
+        print("已经关闭CAN口，不用重新关闭")
    
 ##############################################################################################################
 #       数据库写入函数
@@ -1050,8 +1057,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         is_admin_or_not = is_admin(admin_name,password)
         if is_admin_or_not[0] == True:
             # QMessageBox.information(None, "登录提示", "用户名：" + admin_name + "密码：" + password, QMessageBox.Ok, QMessageBox.Ok)
-            self.close()
             self.exit_flag = "onLoginClick"
+            self.close()
             self.ChildDialog.show()
         else:
             QMessageBox.information(None, "登录提示", is_admin_or_not[1], QMessageBox.Ok, QMessageBox.Ok)
@@ -1265,10 +1272,10 @@ if __name__ == "__main__":
     app = QApplication(sys.argv) 
     mainwindow = MainWindow()
 
-    uart_thread = threading.Thread(target=runuart)#守护线程
+    uart_thread = threading.Thread(target=runuart)
     uart_thread.start()
     
-    can_thread = threading.Thread(target=runcan)#守护线程
+    can_thread = threading.Thread(target=runcan)#非守护线程
     can_thread.start()
 
     mainwindow.show()
