@@ -7,14 +7,21 @@ Created on Mon Jul 27 09:30:13 2020
 
 import win32print
 import win32ui
-from PIL import Image, ImageWin
+from PIL import Image, ImageWin,ImageDraw,ImageFont
 import qrcode
 import os
 
 def print_barcode(imgname):
     img = qrcode.make(imgname)
-    img_path = os.getcwd() + "/images/" + imgname + ".png"
+    img_path = os.getcwd() + "/barcode/" + imgname + ".png"
     img.save(img_path)
+
+    ttfont = ImageFont.truetype("msyh.ttf",20) 
+    im = Image.open(img_path)
+    draw = ImageDraw.Draw(im)
+    draw.text((35,250),imgname, fill="#000000",font=ttfont)
+    im.save(img_path)
+
     #
     # Constants for GetDeviceCaps
     #
@@ -92,6 +99,6 @@ def print_barcode(imgname):
     
 
 if __name__ == "__main__":
-    imgname = "20200727001"
+    imgname = "20200803001"
     print_barcode(imgname)
 
