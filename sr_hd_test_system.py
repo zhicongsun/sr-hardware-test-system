@@ -865,7 +865,10 @@ import PCANBasic
 from PCANBasic import *
 
 class DriveCAN(PCANBasic):
-    def can_init(self,chanel=PCAN_USBBUS1,bautrate=PCAN_BAUD_500K): #默认参数：通道、波特率
+    def can_init(self,
+        chanel=PCAN_USBBUS1,
+        bautrate=PCAN_BAUD_500K): #默认参数：通道、波特率
+
         # The Plug & Play Channel (PCAN-PCI) is initialized
         result = self.Initialize(chanel, bautrate)
         if result != PCAN_ERROR_OK:
@@ -875,7 +878,11 @@ class DriveCAN(PCANBasic):
         else:
             print ("PCAN-USB (Ch-1) was initialized")
 
-    def can_filter(self,chanel=PCAN_USBBUS1,from_id=0,to_id=0x7FF,fileter_mode=PCAN_MODE_STANDARD): #默认参数：通道，起始id，结束id，滤波器模式（标准）
+    def can_filter(self,
+        chanel=PCAN_USBBUS1,
+        from_id=0,to_id=0x7FF,
+        fileter_mode=PCAN_MODE_STANDARD): #默认参数：通道，起始id，结束id，滤波器模式（标准）
+
         #  The message filter is closed first to ensure the reception of the new range of IDs.
         result = self.SetValue(PCAN_USBBUS1,PCAN_MESSAGE_FILTER,PCAN_FILTER_CLOSE)
         if result != PCAN_ERROR_OK:
@@ -934,7 +941,12 @@ class DriveCAN(PCANBasic):
         else:
             pass
 
-    def can_write(self,chanel=PCAN_USBBUS1,msg_type=PCAN_MESSAGE_STANDARD,frame_id=0x100,send_data=[1,2,3,4]): #默认参数：通道，帧类型（标准），帧id，发送数据（列表）
+    def can_write(self,
+        chanel=PCAN_USBBUS1,
+        msg_type=PCAN_MESSAGE_STANDARD,
+        frame_id=0x100,
+        send_data=[1,2,3,4]): #默认参数：通道，帧类型（标准），帧id，发送数据（列表）
+
         msg = TPCANMsg()
         msg.ID = frame_id
         msg.MSGTYPE = PCAN_MESSAGE_STANDARD
@@ -963,7 +975,112 @@ def runcan():
         print("成功关闭了CAN口")
     except:
         print("已经关闭CAN口，不用重新关闭")
-   
+
+##############################################################################################################
+#       USB2SPI类
+##############################################################################################################
+from ctypes import *
+import platform
+from time import sleep
+from usb_device import *
+from usb2spi import *
+from sys import *
+
+class DriveUSB2SPI():
+    def __init__(self,
+        config_mode = SPI_MODE_SOFT_HDX,
+        config_master = SPI_MASTER,
+        config_cpol = 0,
+        config_cpha = 0,
+        config_lsbfirst = SPI_MSB,
+        config_selpolarity = SPI_SEL_LOW,
+        config_clockspeedhz = 500000):
+
+        self.DevIndex = 0
+        self.DevHandles = (c_uint * 20)()
+        # 扫描设备
+        self.ret = USB_ScanDevice(byref(self.DevHandles))
+        if(self.ret == 0):
+            print("没有SPI设备连接")
+        else:
+            print("有 %d SPI设备连接!" % self.ret)
+            # 打开设备
+            self.ret = USB_OpenDevice(self.DevHandles[self.DevIndex])
+            if(bool(self.ret)==False):
+                print("打开SPI设备失败")
+            else:
+                print("成功打开SPI设备")
+                # 获取设备信息
+                USB2XXXInfo = DEVICE_INFO()
+                USB2XXXFunctionString = (c_char * 256)()
+                self.ret = DEV_GetDeviceInfo(self.DevHandles[self.DevIndex],byref(USB2XXXInfo),byref(USB2XXXFunctionString))
+                if(bool(self.ret)==False):
+                    print("Get device infomation faild!")
+                else:
+                    print("USB2XXX device infomation:")
+                    print("--Firmware Name: %s"%bytes(USB2XXXInfo.FirmwareName).decode('ascii'))
+                    print("--Firmware Version: v%d.%d.%d"%((USB2XXXInfo.FirmwareVersion>>24)&0xFF,(USB2XXXInfo.FirmwareVersion>>16)&0xFF,USB2XXXInfo.FirmwareVersion&0xFFFF))
+                    print("--Hardware Version: v%d.%d.%d"%((USB2XXXInfo.HardwareVersion>>24)&0xFF,(USB2XXXInfo.HardwareVersion>>16)&0xFF,USB2XXXInfo.HardwareVersion&0xFFFF))
+                    print("--Build Date: %s"%bytes(USB2XXXInfo.BuildDate).decode('ascii'))
+                    print("--Serial Number: ",end='')
+                    for i in range(0, len(USB2XXXInfo.SerialNumber)):
+                        print("%08X"%USB2XXXInfo.SerialNumber[i],end='')
+                    print("")
+                    print("--Function String: %s"%bytes(USB2XXXFunctionString.value).decode('ascii'))
+                    
+                    # 配置初始化SPI
+                    SPIConfig = SPI_CONFIG()
+                    SPIConfig.Mode = config_mode      # 硬件半双工模式
+                    SPIConfig.Master = config_master    # 主机模式
+                    SPIConfig.CPOL = config_cpol
+                    SPIConfig.CPHA = config_cpha
+                    SPIConfig.LSBFirst = config_lsbfirst
+                    SPIConfig.SelPolarity = config_selpolarity
+                    SPIConfig.ClockSpeedHz = config_clockspeedhz
+                    self.ret = SPI_Init(self.DevHandles[self.DevIndex],SPI2_CS0,byref(SPIConfig))
+                    if(self.ret != SPI_SUCCESS):
+                        print("初始化SPI失败")
+                    else:
+                        print("成功初始化SPI")
+    def spi_master_read(self):
+        self.ReadBuffer = (c_ubyte * 16)()
+        self.ret = SPI_ReadBytes(self.DevHandles[self.DevIndex],SPI2_CS0,byref(self.ReadBuffer),len(self.ReadBuffer))
+        if(self.ret != SPI_SUCCESS):
+            print("SPI读取数据失败")
+        else:
+            print("SPI 读取的数据为:")
+            for i in range(0,len(self.ReadBuffer)):
+                print("%02X " % self.ReadBuffer[i],end='')
+            print("")
+
+    def spi_master_write(self):
+        self.WriteBuffer = (c_ubyte * 16)()
+        for i in range(0,len(self.WriteBuffer)):
+            self.WriteBuffer[i] = i
+        self.ret = SPI_WriteBytes(self.DevHandles[self.DevIndex],SPI2_CS0,byref(self.WriteBuffer),len(self.WriteBuffer))
+        if(self.ret != SPI_SUCCESS):
+            print("SPI发送数据失败")
+        else:
+            print("SPI发送数据成功")
+
+    def spi_master_write_and_read(self):
+        self.ret = SPI_WriteReadBytes(self.DevHandles[self.DevIndex],SPI2_CS0,byref(self.WriteBuffer),len(self.WriteBuffer),byref(self.ReadBuffer),len(self.ReadBuffer),10)
+        if(self.ret != SPI_SUCCESS):
+            print("SPI 写读数据失败")
+        else:
+            print("SPI 写读的数据为:")
+            for i in range(0,len(self.ReadBuffer)):
+                print("%02X " % self.ReadBuffer[i],end='')
+            print("")
+    
+    def spi_close(self):
+        self.ret = USB_CloseDevice(self.DevHandles[self.DevIndex])
+        DLL_FreeLib()#释放dll资源
+        if(bool(self.ret)):
+            print("成功关闭SPI设备")
+        else:
+            print("无法关闭SPI设备")
+
 ##############################################################################################################
 #       数据库写入函数
 ##############################################################################################################
@@ -1354,7 +1471,7 @@ if __name__ == "__main__":
     import threading
     uart_thread_destroy_flag = True
     can_thread_destroy_flag = True
-    pcb_data = [ #初始化数据
+    pcb_data = [ #测试的数据
         {'report_code': 'None', 
          'task_name':'None',
          'report_date':'None',
