@@ -686,7 +686,7 @@ class PDFGenerator:
         # PCB测试数据
         story.append(Paragraph("PCB测试数据", self.table_title_style))
         story.append(Spacer(1, 3 * mm))
-        task_table = Table(self.pcb_data[1:], colWidths=[60 * mm, 120 * mm], rowHeights=12 * mm, style=self.common_style)
+        task_table = Table(self.pcb_data[1:], colWidths=[60 * mm, 120 * mm], rowHeights=12 * mm, style=self.common_style)#调整宽度高度
         story.append(task_table)
 
         story.append(Spacer(1, 20 * mm))
@@ -1057,6 +1057,76 @@ def is_admin(admin_name,password):#通过数据库判断是否未管理员，是
         print("断开连接失败，请检查设置")
     return allow_open
 
+##############################################################################################################
+#       读取数据库生成控制板PCB编号的函数
+############################################################################################################## 
+import pymysql
+import re
+import datetime
+
+def generate_pcb_numb():#对pcb_numb和date_time都赋值
+    global pcb_data
+    
+    #从数据库获取数据
+    try:
+        db = pymysql.connect("localhost","root","SR2020","sr_test")
+        print("已连接数据库sr_test")
+    except:
+        print("连接数据库sr_test失败，以下操作无效，请检查设置")
+    cursor = db.cursor()
+    search_cmd = """select * from sr_test.pcb_data"""
+    cursor.execute(search_cmd)
+    pcb_database_info = cursor.fetchall()
+    try:
+        db.close()
+        print("已断开与数据库sr_test的连接")
+    except:
+        print("断开连接失败，请检查设置")
+    
+    #产生pcb_numb
+    now = datetime.datetime.now()
+    now_ymd = now.strftime("%Y%m%d")#获取当时的年月日
+    each_result = []*len(pcb_database_info)
+    for i in range(len(pcb_database_info)):#遍历数据库中的每个pcb_numb，将合格与否记录在each_result中
+        comp = re.match(now_ymd, pcb_database_info[i][6])#利用正则表达式比较数据库中的编码日期是否为当天
+        if pcb_database_info[i][6] == "None" or comp == None:
+            each_result.append('None')
+        elif (comp.span() == (0,8)) and (pcb_database_info[i][4] == 'True'):
+            each_result.append('True')
+        elif (comp.span() == (0,8)) and (pcb_database_info[i][4] == 'False'):
+            each_result.append('False')
+        else:
+            print("检测pcb_numb时发现数据库内容异常，请检查")
+
+    pcb_data[2][1] = now.strftime("%Y-%m-%d %H:%M:%S")#为数据库的pcb_data的date_time赋值
+    if pcb_data[5][1] == "True":#当前待加入的pcb是合格的，产生合格编号否则产生不合格编号，编号格式：日期+T/F+合格/不合格编号
+        numb = each_result.count('True')+1  #如2020年8月4号第三个合格pcb的编号pcb_numb为20200804T0003
+        if len(str(numb)) == 1:
+            pcb_data[7][1] = now_ymd + "T" + "000" + str(numb)
+        elif len(str(numb)) == 2:
+            pcb_data[7][1] = now_ymd + "T" + "00" + str(numb)
+        elif len(str(numb)) == 3:
+            pcb_data[7][1] = now_ymd + "T" + "0" + str(numb)        
+        elif len(str(numb)) == 4:
+            pcb_data[7][1] = now_ymd + "T" + str(numb)        
+        else:
+            print("生产超过9999个合格产品，编号不足，请修改程序")
+        print("生成合格编码：%s " % pcb_data[7][1])
+    elif pcb_data[5][1] == "False":
+        numb = each_result.count('False')+1
+        if len(str(numb)) == 1:
+            pcb_data[7][1] = now_ymd + "F" + "000" + str(numb)
+        elif len(str(numb)) == 2:
+            pcb_data[7][1] = now_ymd + "F" + "00" + str(numb)
+        elif len(str(numb)) == 3:
+            pcb_data[7][1] = now_ymd + "F" + "0" + str(numb)  
+        elif len(str(numb)) == 4:
+            pcb_data[7][1] = now_ymd + "F" + str(numb)        
+        else:
+            print("生产超过9999个不合格产品，编号不足，请修改程序")
+        print("生成不合格编码：%s " % pcb_data[7][1])
+    else:#
+        print("未进行外设检测，无法正常生成pcb_numb")
 
 ##############################################################################################################
 #       主界面的类
@@ -1152,11 +1222,13 @@ class ChildWin(QMainWindow, Ui_Dialog):
     def onButton1Click(self):
         global pcb_data
         global test_pdf
+        global default_pcb_data
         _translate = QtCore.QCoreApplication.translate
 
-        now = datetime.datetime.now()
-        pcb_data[2][1] = now.strftime("%Y-%m-%d-%H-%M")#为数据库pcb_data的date_time赋值
-        pcb_data[7][1] = pcb_data[2][1]+'001'#获取当时时间作为该控制板编号，为数据库pcb_data的pcb_numb赋值
+        # now = datetime.datetime.now()
+        # pcb_data[2][1] = now.strftime("%Y-%m-%d-%H-%M")#为数据库pcb_data的date_time赋值
+        # pcb_data[7][1] = pcb_data[2][1]+'001'#获取当时时间作为该控制板编号，为数据库pcb_data的pcb_numb赋值
+        generate_pcb_numb()
         #封面内容赋值
         pcb_data[0]['report_code'] = pcb_data[7][1] 
         pcb_data[0]['task_name'] = '第四代电气PCB测试'
@@ -1167,11 +1239,12 @@ class ChildWin(QMainWindow, Ui_Dialog):
         self.label11.setText(_translate("Dialog", "已生成PDF,写入数据库，生成二维码，请查看"))
         write_database(pcb_data)#写入数据库
         print_barcode(pcb_data[7][1])#pcb_numb作为编号，生成二维码
+        pcb_data = default_pcb_data.copy()#写入数据一次后重置为默认数据
         
-    def mytimer(self):
+    def mytimer(self):#定时器刷新GUI界面
         timer = QTimer(self)
         timer.timeout.connect(self.update)
-        timer.start(100)
+        timer.start(100)#ms
         
     def update(self):
         global pcb_data
@@ -1290,9 +1363,29 @@ if __name__ == "__main__":
         ['date_time','None'],
         ['pcb_version','None'],
         ['test_firmwave_version','None'],
+        ['qualified_or_not','True'],
+        ['func_firmwave_version','None'],
+        ['pcb_numb','None'],
+        ['io_din','None'],
+        ['io_dout','None'],
+        ['uart115200_packet_loss_rate','None'],
+        ['uart115200_error_rate','None'],
+        ['uart115200_delay_time','None'],
+        ['can50k_packet_loss_rate','None'],
+        ['can50k_error_rate','None']
+    ]
+    default_pcb_data = [ #初始化数据
+        {'report_code': 'None', 
+         'task_name':'None',
+         'report_date':'None',
+         'report_creator':'None'},
+        ['admin_name','None'],
+        ['date_time','None'],
+        ['pcb_version','None'],
+        ['test_firmwave_version','None'],
         ['qualified_or_not','None'],
         ['func_firmwave_version','None'],
-        ['pcb_numb','pcb_num111'],
+        ['pcb_numb','None'],
         ['io_din','None'],
         ['io_dout','None'],
         ['uart115200_packet_loss_rate','None'],
