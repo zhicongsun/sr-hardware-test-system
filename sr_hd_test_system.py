@@ -940,7 +940,7 @@ class DriveCAN(PCANBasic):
                           Result.DATA[7]))
         else:
             pass
-
+   
     def can_write(self,
         chanel=PCAN_USBBUS1,
         msg_type=PCAN_MESSAGE_STANDARD,
@@ -962,6 +962,7 @@ class DriveCAN(PCANBasic):
             print(result)
         else:
             print("Message sent successfully")
+
 ##############################################################################################################
 #       CAN任务
 ##############################################################################################################
@@ -1306,6 +1307,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 #       操作界面的类
 ##############################################################################################################
 import datetime
+import webbrowser
 
 class ChildWin(QMainWindow, Ui_Dialog):
     #定义信号
@@ -1314,11 +1316,11 @@ class ChildWin(QMainWindow, Ui_Dialog):
         self.VersionDialog = VersionWin()
         bar=self.menuBar()
         #向菜单栏中添加新的QMenu对象，父菜单
-        helpbar=bar.addMenu('Help')
+        helpbar = bar.addMenu('Help')
         helpbar.addAction('Help Document')
         about = helpbar.addMenu('About')
         about.addAction('Version')
-
+        about.addAction('Standard Robots')
         #单击任何Qmenu对象，都会发射信号，绑定槽函数
         helpbar.triggered[QAction].connect(self.processtrigger)
         
@@ -1332,6 +1334,10 @@ class ChildWin(QMainWindow, Ui_Dialog):
         print(q.text()+'is triggeres')
         if q.text() == "Version":
             self.VersionDialog.show()#打开版本界面
+        elif q.text() == "Help Document":
+            webbrowser.open('https://www.yuque.com/radarsun/rl2hzg/fiwwni')
+        elif q.text() == "Standard Robots":
+            webbrowser.open("https://www.standard-robots.com/")
         
     def connect_event(self):
         self.pushButton1.clicked.connect(self.onButton1Click) 
