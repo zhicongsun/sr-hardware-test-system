@@ -15,6 +15,9 @@ import sys
 import qtdesigner_rc
 import version_rc
 
+##############################################################################################################
+#       登录界面.ui生成的类
+##############################################################################################################
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -236,6 +239,9 @@ class Ui_MainWindow(object):
         self.mBtnCancel.setText(_translate("MainWindow", "取消"))
         self.label.setText(_translate("MainWindow", "登  录"))
 
+##############################################################################################################
+#       主界面.ui生成的类
+##############################################################################################################
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -963,6 +969,9 @@ class Ui_Dialog(object):
         self.label1_7.setText(_translate("Dialog", "其他2"))
         self.label5_7.setText(_translate("Dialog", "Note:Null"))
 
+##############################################################################################################
+#       版本界面.ui生成的类
+##############################################################################################################
 class Ui_version_dialog(object):
     def setupUi(self, dialog):
         dialog.setObjectName("dialog")
