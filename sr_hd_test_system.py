@@ -27,7 +27,6 @@ class Ui_MainWindow(object):
         MainWindow.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setStyleSheet("background-color: rgb(68, 68, 68);\n"
-"\n"
 "QPushButton{\n"
 "    border-radius:2;\n"
 "    background-color: #E1E1E1;\n"
@@ -50,15 +49,15 @@ class Ui_MainWindow(object):
         self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
-        self.widget = QtWidgets.QWidget(self.frame)
-        self.widget.setGeometry(QtCore.QRect(20, 0, 281, 131))
-        self.widget.setObjectName("widget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.widget)
+        self.layoutWidget = QtWidgets.QWidget(self.frame)
+        self.layoutWidget.setGeometry(QtCore.QRect(20, 0, 281, 131))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.label_2 = QtWidgets.QLabel(self.widget)
+        self.label_2 = QtWidgets.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily("微软雅黑 Light")
         font.setPointSize(10)
@@ -68,7 +67,7 @@ class Ui_MainWindow(object):
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
-        self.mTextUserName = QtWidgets.QLineEdit(self.widget)
+        self.mTextUserName = QtWidgets.QLineEdit(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily("微软雅黑 Light")
         font.setPointSize(10)
@@ -77,7 +76,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.mTextUserName)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.label_3 = QtWidgets.QLabel(self.widget)
+        self.label_3 = QtWidgets.QLabel(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily("微软雅黑 Light")
         font.setPointSize(10)
@@ -87,7 +86,7 @@ class Ui_MainWindow(object):
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
-        self.mTextPassword = QtWidgets.QLineEdit(self.widget)
+        self.mTextPassword = QtWidgets.QLineEdit(self.layoutWidget)
         font = QtGui.QFont()
         font.setFamily("微软雅黑 Light")
         font.setPointSize(10)
@@ -97,7 +96,8 @@ class Ui_MainWindow(object):
         self.mTextPassword.setObjectName("mTextPassword")
         self.verticalLayout.addWidget(self.mTextPassword)
         self.checkBox = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox.setGeometry(QtCore.QRect(20, 220, 71, 16))
+        self.checkBox.setEnabled(True)
+        self.checkBox.setGeometry(QtCore.QRect(20, 220, 81, 16))
         font = QtGui.QFont()
         font.setFamily("微软雅黑 Light")
         self.checkBox.setFont(font)
@@ -205,13 +205,13 @@ class Ui_MainWindow(object):
 "    border-color:#B7B7B7;\n"
 "}")
         self.mBtnCancel.setObjectName("mBtnCancel")
-        self.widget1 = QtWidgets.QWidget(self.centralwidget)
-        self.widget1.setGeometry(QtCore.QRect(20, 20, 90, 25))
-        self.widget1.setObjectName("widget1")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.widget1)
+        self.layoutWidget1 = QtWidgets.QWidget(self.centralwidget)
+        self.layoutWidget1.setGeometry(QtCore.QRect(20, 20, 90, 29))
+        self.layoutWidget1.setObjectName("layoutWidget1")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.layoutWidget1)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.label = QtWidgets.QLabel(self.widget1)
+        self.label = QtWidgets.QLabel(self.layoutWidget1)
         font = QtGui.QFont()
         font.setFamily("微软雅黑")
         font.setPointSize(12)
@@ -1479,13 +1479,13 @@ if __name__ == "__main__":
          'task_name':'None',
          'report_date':'None',
          'report_creator':'None'},
-        ['admin_name','None'],
-        ['date_time','None'],
-        ['pcb_version','None'],
+        ['admin_name','None'],#在is_admin中赋值，登录时
+        ['date_time','None'],#在generate_pcb_nub中赋值，最后按下生成PDF按钮时
+        ['pcb_version','None'],#在runuart中赋值，扫码时
         ['test_firmwave_version','None'],
         ['qualified_or_not','True'],
         ['func_firmwave_version','None'],
-        ['pcb_numb','None'],
+        ['pcb_numb','None'],#在generate_pcb_nub中赋值，最后按下生成PDF按钮时
         ['io_din','None'],
         ['io_dout','None'],
         ['uart115200_packet_loss_rate','None'],
@@ -1515,6 +1515,7 @@ if __name__ == "__main__":
         ['can50k_error_rate','None']
     ]
 
+    # lock = threading.lock()
     test_pdf = PDFGenerator()#生成PDF实例，规定PDF格式
 
     objUART = DriveUART()#生成串口实例
