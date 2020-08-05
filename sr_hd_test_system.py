@@ -783,11 +783,11 @@ def print_barcode(imgname):
 import serial 
 import serial.tools.list_ports
  
-class ReadPcbData:
+class DriveUART:
     def __init__(self):
         self.connect_flag = True
         self.hd_flag = [0,0]#硬件连接标志位
-        print("init the ReadPcbData")
+        print("init the DriveUART")
 
     def connect_uart(self):
         plist = list(serial.tools.list_ports.comports())
@@ -848,14 +848,14 @@ class ReadPcbData:
 ##############################################################################################################
 def runuart():
     global pcb_data
-    global readpcbdata
+    global objUART
     global uart_thread_destroy_flag
     while uart_thread_destroy_flag:
-        recevied_data = readpcbdata.waitForPcbData()
+        recevied_data = objUART.waitForPcbData()
         if recevied_data[0] is True:
             pcb_data[3][1] = recevied_data[1]#获取控制板（pcb）版本，对应pcb_data的pcb_version
     try:
-        readpcbdata.ser.close()#得到线程结束标识，则关闭串口
+        objUART.ser.close()#得到线程结束标识，则关闭串口
     except:
         print("串口还没打开，不用重复关闭")
 ##############################################################################################################
@@ -1341,11 +1341,8 @@ class ChildWin(QMainWindow, Ui_Dialog):
         global test_pdf
         global default_pcb_data
         _translate = QtCore.QCoreApplication.translate
-
-        # now = datetime.datetime.now()
-        # pcb_data[2][1] = now.strftime("%Y-%m-%d-%H-%M")#为数据库pcb_data的date_time赋值
-        # pcb_data[7][1] = pcb_data[2][1]+'001'#获取当时时间作为该控制板编号，为数据库pcb_data的pcb_numb赋值
-        generate_pcb_numb()
+        
+        generate_pcb_numb()#对pcb_numb和date_time赋值
         #封面内容赋值
         pcb_data[0]['report_code'] = pcb_data[7][1] 
         pcb_data[0]['task_name'] = '第四代电气PCB测试'
@@ -1365,11 +1362,11 @@ class ChildWin(QMainWindow, Ui_Dialog):
         
     def update(self):
         global pcb_data
-        global readpcbdata #使用全局变量调用串口实例
+        global objUART #使用全局变量调用串口实例
         _translate = QtCore.QCoreApplication.translate
 
         #扫描枪状态
-        if readpcbdata.connect_flag == True:
+        if objUART.connect_flag == True:
             self.label2.setText(_translate("Dialog", "已连接"))
             self.label2.setStyleSheet("color: white;\n"
                 "background-color: red;")
@@ -1388,20 +1385,20 @@ class ChildWin(QMainWindow, Ui_Dialog):
                 "color: rgb(4, 4, 4);")
 
         #提示界面的信息
-        if readpcbdata.connect_flag != True:
+        if objUART.connect_flag != True:
             self.label11.setText(_translate("Dialog", "请连接扫码枪"))
-        elif (readpcbdata.connect_flag == True) and (pcb_data[3][1] == "None"):
+        elif (objUART.connect_flag == True) and (pcb_data[3][1] == "None"):
             self.label11.setText(_translate("Dialog", "请扫描控制器的二维码"))
-        elif (readpcbdata.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] =="None"):
+        elif (objUART.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] =="None"):
             self.label11.setText(_translate("Dialog", "请烧写测试固件"))
-        elif (readpcbdata.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "None"):
+        elif (objUART.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "None"):
             self.label11.setText(_translate("Dialog", "已烧写测试固件，等待测试结果"))
-        elif (readpcbdata.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "False"):
+        elif (objUART.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "False"):
             self.label11.setText(_translate("Dialog", "控制器不合格，请点按钮生成报告与二维码"))
-        elif ((readpcbdata.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "True") 
+        elif ((objUART.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "True") 
              and (pcb_data[6][1] == "None")):
             self.label11.setText(_translate("Dialog", "控制器合格，请烧录功能固件"))
-        elif ((readpcbdata.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "True") 
+        elif ((objUART.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "True") 
              and (pcb_data[6][1] != "None")):
             self.label11.setText(_translate("Dialog", "功能固件已烧录，请点按钮生成报告与SN码"))
         else: 
@@ -1514,8 +1511,8 @@ if __name__ == "__main__":
 
     test_pdf = PDFGenerator()#生成PDF实例，规定PDF格式
 
-    readpcbdata = ReadPcbData()#生成串口实例
-    readpcbdata.connect_uart()
+    objUART = DriveUART()#生成串口实例
+    objUART.connect_uart()
 
     objPCAN = DriveCAN()#CAN实例
     objPCAN.can_init()
