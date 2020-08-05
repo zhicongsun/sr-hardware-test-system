@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>846</width>
-    <height>605</height>
+    <width>1391</width>
+    <height>659</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -25,9 +25,9 @@
   <widget class="QTextBrowser" name="textBrowser">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>100</y>
-     <width>321</width>
+     <x>1000</x>
+     <y>120</y>
+     <width>341</width>
      <height>151</height>
     </rect>
    </property>
@@ -38,9 +38,9 @@
   <widget class="QProgressBar" name="progressBar">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>260</y>
-     <width>361</width>
+     <x>1000</x>
+     <y>280</y>
+     <width>381</width>
      <height>23</height>
     </rect>
    </property>
@@ -51,8 +51,8 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>310</x>
-     <y>0</y>
+     <x>540</x>
+     <y>10</y>
      <width>221</width>
      <height>51</height>
     </rect>
@@ -75,9 +75,9 @@
   <widget class="QLabel" name="label11">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>310</y>
-     <width>321</width>
+     <x>1000</x>
+     <y>320</y>
+     <width>351</width>
      <height>71</height>
     </rect>
    </property>
@@ -109,9 +109,9 @@ color: rgb(255, 0, 0);</string>
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
-     <x>410</x>
-     <y>70</y>
-     <width>391</width>
+     <x>980</x>
+     <y>80</y>
+     <width>401</width>
      <height>331</height>
     </rect>
    </property>
@@ -130,16 +130,18 @@ color: rgb(255, 0, 0);</string>
   <widget class="QGroupBox" name="groupBox_3">
    <property name="geometry">
     <rect>
-     <x>410</x>
-     <y>400</y>
-     <width>391</width>
-     <height>191</height>
+     <x>980</x>
+     <y>430</y>
+     <width>401</width>
+     <height>211</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <family>微软雅黑</family>
      <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
     </font>
    </property>
    <property name="title">
@@ -148,8 +150,8 @@ color: rgb(255, 0, 0);</string>
    <widget class="QPushButton" name="pushButton1">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>30</y>
+      <x>50</x>
+      <y>40</y>
       <width>141</width>
       <height>121</height>
      </rect>
@@ -181,8 +183,8 @@ background-color: rgb(85, 170, 0);
    <widget class="QCheckBox" name="checkBox">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>160</y>
+      <x>10</x>
+      <y>180</y>
       <width>81</width>
       <height>20</height>
      </rect>
@@ -194,8 +196,8 @@ background-color: rgb(85, 170, 0);
    <widget class="QPushButton" name="pushButton2">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>30</y>
+      <x>220</x>
+      <y>40</y>
       <width>141</width>
       <height>121</height>
      </rect>
@@ -261,7 +263,7 @@ color: rgb(4, 4, 4);</string>
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>480</y>
+     <y>520</y>
      <width>121</width>
      <height>71</height>
     </rect>
@@ -295,7 +297,7 @@ background-color: rgb(135, 133, 131);</string>
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>210</y>
+     <y>220</y>
      <width>121</width>
      <height>71</height>
     </rect>
@@ -329,7 +331,7 @@ background-color: rgb(135, 133, 131);</string>
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>390</y>
+     <y>420</y>
      <width>121</width>
      <height>71</height>
     </rect>
@@ -363,7 +365,7 @@ background-color: rgb(135, 133, 131);</string>
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>300</y>
+     <y>320</y>
      <width>121</width>
      <height>71</height>
     </rect>
@@ -397,7 +399,7 @@ background-color: rgb(135, 133, 131);</string>
    <property name="geometry">
     <rect>
      <x>230</x>
-     <y>300</y>
+     <y>320</y>
      <width>121</width>
      <height>71</height>
     </rect>
@@ -431,7 +433,7 @@ color: rgb(4, 4, 4);</string>
    <property name="geometry">
     <rect>
      <x>230</x>
-     <y>480</y>
+     <y>520</y>
      <width>121</width>
      <height>71</height>
     </rect>
@@ -499,7 +501,7 @@ background-color: rgb(135, 133, 131);</string>
    <property name="geometry">
     <rect>
      <x>230</x>
-     <y>390</y>
+     <y>420</y>
      <width>121</width>
      <height>71</height>
     </rect>
@@ -533,7 +535,7 @@ color: rgb(4, 4, 4);</string>
    <property name="geometry">
     <rect>
      <x>230</x>
-     <y>210</y>
+     <y>220</y>
      <width>121</width>
      <height>71</height>
     </rect>
@@ -567,9 +569,9 @@ color: rgb(4, 4, 4);</string>
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>70</y>
+     <y>80</y>
      <width>331</width>
-     <height>521</height>
+     <height>561</height>
     </rect>
    </property>
    <property name="font">
@@ -582,6 +584,1047 @@ color: rgb(4, 4, 4);</string>
    </property>
    <property name="title">
     <string>硬件信息</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label2_2">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>120</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label1_2">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>120</y>
+     <width>121</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(135, 133, 131);</string>
+   </property>
+   <property name="text">
+    <string>IO</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_4">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>80</y>
+     <width>561</width>
+     <height>561</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="title">
+    <string>外设检测情况</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label3_2">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>160</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label4_2">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>200</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label5_2">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>240</y>
+     <width>261</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>Note:Null</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label1_3">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>300</y>
+     <width>121</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(135, 133, 131);</string>
+   </property>
+   <property name="text">
+    <string>CAN</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label3_3">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>340</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label4_3">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>380</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label2_3">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>300</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label5_3">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>420</y>
+     <width>261</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>Note:Null</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label3_4">
+   <property name="geometry">
+    <rect>
+     <x>830</x>
+     <y>340</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label2_4">
+   <property name="geometry">
+    <rect>
+     <x>830</x>
+     <y>300</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label4_4">
+   <property name="geometry">
+    <rect>
+     <x>830</x>
+     <y>380</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label1_4">
+   <property name="geometry">
+    <rect>
+     <x>690</x>
+     <y>300</y>
+     <width>121</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(135, 133, 131);</string>
+   </property>
+   <property name="text">
+    <string>UART</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label5_4">
+   <property name="geometry">
+    <rect>
+     <x>690</x>
+     <y>420</y>
+     <width>261</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>Note:Null</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label2_5">
+   <property name="geometry">
+    <rect>
+     <x>830</x>
+     <y>120</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label5_5">
+   <property name="geometry">
+    <rect>
+     <x>690</x>
+     <y>240</y>
+     <width>261</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>Note:Null</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label4_5">
+   <property name="geometry">
+    <rect>
+     <x>830</x>
+     <y>200</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label3_5">
+   <property name="geometry">
+    <rect>
+     <x>830</x>
+     <y>160</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label1_5">
+   <property name="geometry">
+    <rect>
+     <x>690</x>
+     <y>120</y>
+     <width>121</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(135, 133, 131);</string>
+   </property>
+   <property name="text">
+    <string>SPI</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label2_6">
+   <property name="geometry">
+    <rect>
+     <x>830</x>
+     <y>470</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label3_6">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>510</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label5_6">
+   <property name="geometry">
+    <rect>
+     <x>690</x>
+     <y>590</y>
+     <width>261</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>Note:Null</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label2_7">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>470</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label4_6">
+   <property name="geometry">
+    <rect>
+     <x>830</x>
+     <y>550</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label3_7">
+   <property name="geometry">
+    <rect>
+     <x>830</x>
+     <y>510</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label4_7">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>550</y>
+     <width>121</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label1_6">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>470</y>
+     <width>121</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(135, 133, 131);</string>
+   </property>
+   <property name="text">
+    <string>其他1</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label1_7">
+   <property name="geometry">
+    <rect>
+     <x>690</x>
+     <y>470</y>
+     <width>121</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(135, 133, 131);</string>
+   </property>
+   <property name="text">
+    <string>其他2</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label5_7">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>590</y>
+     <width>261</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>9</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(231, 231, 231);
+color: rgb(4, 4, 4);</string>
+   </property>
+   <property name="text">
+    <string>Note:Null</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
    </property>
   </widget>
  </widget>
