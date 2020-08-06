@@ -1699,7 +1699,17 @@ def write_database(pcb_data):
 #       通过读取数据库administrators_data判断是否为管理员
 ##############################################################################################################
 import pymysql
-def is_admin(admin_name,password):#通过数据库判断是否未管理员，是则返回True,否则返回False
+def is_admin(admin_name,password):
+    """判断是否为已注册的管理员
+    
+    通过数据库判断是否未管理员，是则返回True,否则返回False
+    参数：
+        admin_name: 输入的账号名。string类型
+        password：输入的密码。string类型
+    返回：
+        allow_open[0]: 代表是否在注册列表中
+        allow_open[1]: 提示信息
+    """
     global pcb_data
     try:
         db = pymysql.connect("localhost","root","SR2020","sr_test")
@@ -1752,10 +1762,13 @@ def is_admin(admin_name,password):#通过数据库判断是否未管理员，是
 import pymysql
 import re
 import datetime
-
 def generate_pcb_numb():#对pcb_numb和date_time都赋值
+    """生成pcb_numb的函数
+
+    查询数据库中的编号，分配新编号，编码格式：日期+T/F+号码（容量9999），如20200801T0001
+    """
     global pcb_data
-    
+
     #从数据库获取数据
     try:
         db = pymysql.connect("localhost","root","SR2020","sr_test")
@@ -1834,14 +1847,23 @@ import matplotlib.pyplot as plt
 import os
 
 def draw_line_chart(pcb_numb,peripheral_type,loss_rate,error_rate,delay_time = None):
+    """画外设测试信息的函数
 
+    将UART和CAN的测试指标分别用折线图绘制，图保存在matplot_images文件夹，命名pcb_numb + 外设类型
+    参数：
+        pcb_data: PCB编码
+        peripheral_type: 外设类型。string类型，"CAN" "UART"两种
+        loss_rate: 丢包率，以%为单位。list类型，如[10,20,30]，10代表丢包率10%
+        error_rate: 误码率，以%为单位。list类型，如[10,4,12]，10代表丢包率10%
+        delay_time: 传输时延，以%为单位。list类型，如[100,120]，100代表延迟100ms
+    返回：
+        保存两个.png在matplot_images文件夹，命名pcb_numb + 外设类型
+    """
     # 定义自己的字体，微软雅黑，否则中文显示不出来,这边不用了
     # myfont = fm.FontProperties(fname=r'.\msyh.ttf') # 设置字体,配合，需要fontproperties = myfont，import matplotlib.font_manager as fm
-
     plt.rcParams['font.sans-serif'] = ['SimHei'] # 支持中文
-    # 定义显示的数据
-    
-    # 根据检测id速度的类型显示Label
+
+    # 根据检测外设速度的类型显示Label
     if len(loss_rate)==1:
         x = range(1,2)
         x_label = ["50K_9600"]
@@ -1858,14 +1880,13 @@ def draw_line_chart(pcb_numb,peripheral_type,loss_rate,error_rate,delay_time = N
 
     # 创建画布
     plt.figure()
-    #绘图
+    # 绘图
     plt.plot(x, loss_rate, marker='o', color='r', label='丢包率')
     plt.plot(x, error_rate, marker='*', color='b', label='误码率')
     if peripheral_type == "UART": # CAN没有延迟参数
         plt.plot(x,delay_time,marker='o', color='y', label='传输延迟')
     elif peripheral_type == "CAN":
         pass
-
     # 显示图例（使绘制生效）
     plt.legend()
     # 横坐标名称
@@ -1881,6 +1902,7 @@ def draw_line_chart(pcb_numb,peripheral_type,loss_rate,error_rate,delay_time = N
         plt.title("CAN通信数据统计")
     else:
         pass
+
     # 保存图片到本地，命名格式：pcb_numb + 外设类型
     img_path = os.getcwd() + "/matplot_images/" + pcb_numb + peripheral_type + ".png"
     plt.savefig(img_path,dpi=500,bbox_inches = 'tight')
@@ -1889,22 +1911,29 @@ def draw_line_chart(pcb_numb,peripheral_type,loss_rate,error_rate,delay_time = N
 #       主界面的类
 ##############################################################################################################
 class MainWindow(QMainWindow,Ui_MainWindow):
-    exit_flag = "x"
+    """登录界面的类
+
+    继承自Ui_MainWindow，实现用户权限功能，可调用测试界面、提示错误信息
+    """
+    exit_flag = "x" # 关闭事件的标识位，点击了取消或者x按钮置"x"，登录测试系统后自动关闭登录界面时置"onGloginClick"
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
         self.mBtnLogin.clicked.connect(self.onLoginClick)
         self.mBtnCancel.clicked.connect(self.onCancelClick)
-        #一定要在主窗口类的初始化函数中对子窗口进行实例化，如果在其他函数中实例化子窗口
-        #可能会出现子窗口闪退的问题
+        # 要在主窗口类的初始化函数中对子窗口进行实例化，如果在其他函数中实例化子窗口
+        # 可能会出现子窗口闪退的问题
         self.ChildDialog = ChildWin()
    
     def onLoginClick(self):
+        """登录按钮的响应函数
+
+        判断输入的账户信息是否存在数据库中，是则关闭登录界面、打开测试界面，否则提示原因
+        """
         admin_name = self.mTextUserName.text()
         password = self.mTextPassword.text()
         is_admin_or_not = is_admin(admin_name,password)
         if is_admin_or_not[0] == True:
-            # QMessageBox.information(None, "登录提示", "用户名：" + admin_name + "密码：" + password, QMessageBox.Ok, QMessageBox.Ok)
             self.exit_flag = "onLoginClick"
             self.close()
             self.ChildDialog.show()
@@ -1912,13 +1941,22 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             QMessageBox.information(None, "登录提示", is_admin_or_not[1], QMessageBox.Ok, QMessageBox.Ok)
     
     def onCancelClick(self):
+        """取消按钮的响应函数
+        
+        exit_flag置"x"，关闭窗口self.close()
+        """
         self.exit_flag = "x"
         self.close()
 
     def closeEvent(self, event):
+        """窗口关闭响应事件
+        
+        self.close()后触发该函数
+        """
         global uart_thread_destroy_flag
         global can_thread_destroy_flag
-        if self.exit_flag == "x":
+        # 根据两种窗口关闭类型，选择不同操作
+        if self.exit_flag == "x": # 
             # 创建一个消息盒子（提示框）
             quitMsgBox = QMessageBox()
             # 设置提示框的标题
@@ -1944,24 +1982,31 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         else:
             event.accept()
 ##############################################################################################################
-#       操作界面的类
+#       测试界面的类
 ##############################################################################################################
 import datetime
 import webbrowser
 import os
 class ChildWin(QMainWindow, Ui_Dialog):
-    #定义信号
+    """测试界面的类
+    
+    继承自Ui_Dialog
+    """
     def __init__(self):
+        """构造函数
+        
+        加入菜单栏，连接响应时间connnet_event()，开启定时器
+        """
         super(ChildWin, self).__init__()
         self.VersionDialog = VersionWin()
         bar=self.menuBar()
-        #向菜单栏中添加新的QMenu对象，父菜单
+        # 向菜单栏中添加新的QMenu对象，父菜单
         helpbar = bar.addMenu('Help')
         helpbar.addAction('Help Document')
         about = helpbar.addMenu('About')
         about.addAction('Version')
         about.addAction('Standard Robots')
-        #单击任何Qmenu对象，都会发射信号，绑定槽函数
+        # 单击任何Qmenu对象，都会发射信号，绑定槽函数
         helpbar.triggered[QAction].connect(self.processtrigger)
         
         self.setupUi(self)
@@ -1970,6 +2015,10 @@ class ChildWin(QMainWindow, Ui_Dialog):
         self.mytimer()
         
     def processtrigger(self,q):
+        """菜单栏响应函数
+
+        点击Version打开版本界面，点击Help Document打开网页版的帮助文档，点击Standard Robots打开斯坦德官网
+        """
         #输出那个Qmenu对象被点击
         print(q.text()+'is triggeres')
         mainwindow.ChildDialog.textBrowser.append(q.text()+'被点击')
@@ -1984,18 +2033,23 @@ class ChildWin(QMainWindow, Ui_Dialog):
         self.pushButton1.clicked.connect(self.onButton1Click) 
 
     def onButton1Click(self):
+        """"生成PDF写入数据库打印二维码"按钮的响应函数
+
+        生成pcb_numb，为封面内容的pcb_data赋值，生成外设统计图，生成PDF，写入数据库，生成并打印二维码，记录过程为txt，重置pcb_data数据
+        """
         global pcb_data
         global test_pdf
         global default_pcb_data
         _translate = QtCore.QCoreApplication.translate
         
-        generate_pcb_numb()#对pcb_numb和date_time赋值
+        # 对pcb_numb和date_time赋值
+        generate_pcb_numb() 
         #封面内容赋值
         pcb_data[0]['report_code'] = pcb_data[7][1] 
         pcb_data[0]['task_name'] = '第四代电气PCB测试'
         pcb_data[0]['report_date'] = pcb_data[2][1]
         pcb_data[0]['report_creator'] = pcb_data[1][1]
-
+        #生成外设统计图
         uart_loss = [pcb_data[10][1],pcb_data[15][1]]
         uart_error = [pcb_data[11][1],pcb_data[16][1]]
         uart_delay = [pcb_data[12][1],pcb_data[17][1]]
@@ -2003,33 +2057,45 @@ class ChildWin(QMainWindow, Ui_Dialog):
         can_error = [pcb_data[14][1],pcb_data[19][1]]
         draw_line_chart(pcb_data[7][1],"UART",uart_loss,uart_error,uart_delay) # 绘制UART统计图
         draw_line_chart(pcb_data[7][1],"CAN",can_loss,can_error) # 绘制CAN统计图
-
-        test_pdf.genTaskPDF(pcb_data)#生成PDF
+        # 生成PDF
+        test_pdf.genTaskPDF(pcb_data) 
         self.label11.setText(_translate("Dialog", "已生成PDF,写入数据库，生成二维码，请查看"))
-        write_database(pcb_data)#写入数据库
-        print_barcode(pcb_data[7][1])#pcb_numb作为编号，生成二维码
+        # 写入数据库
+        write_database(pcb_data) 
+        # pcb_numb作为编号，生成二维码
+        print_barcode(pcb_data[7][1]) 
+        # 将print到textBrowser的内容写入pcb_numb.txt，存入txt文件夹
         try:
             get_text = mainwindow.ChildDialog.textBrowser.toPlainText()
             str_text = str(get_text)
-            f = open('./txt/' + pcb_data[7][1] + '.txt', 'w') # 将过程写入txt
+            f = open('./txt/' + pcb_data[7][1] + '.txt', 'w') 
             print(f.write('{}'.format(str_text)))
             f.close()
         except Exception as e:
             print(e)
-        pcb_data = default_pcb_data.copy()#写入数据一次后重置为默认数据
+        # 写入数据一次后重置为默认数据
+        pcb_data = default_pcb_data.copy()
         
         
-    def mytimer(self):#定时器刷新GUI界面
+    def mytimer(self): 
+        """100ms定时器
+
+        绑定updata函数
+        """
         timer = QTimer(self)
         timer.timeout.connect(self.update)
-        timer.start(100)#ms
+        timer.start(100) # ms
         
     def update(self):
+        """GUI界面的更新函数
+
+        每100ms被调用一次
+        """
         global pcb_data
-        global objUART #使用全局变量调用串口实例
+        global objUART # 使用全局变量调用串口实例
         _translate = QtCore.QCoreApplication.translate
 
-        #扫描枪状态
+        # 扫描枪状态
         if objUART.connect_flag == True:
             self.label2.setText(_translate("Dialog", "已连接"))
             self.label2.setStyleSheet("color: white;\n"
@@ -2038,7 +2104,7 @@ class ChildWin(QMainWindow, Ui_Dialog):
             self.label2.setText(_translate("Dialog", "未连接"))
             self.label2.setStyleSheet("background-color: rgb(231, 231, 231);\n"
                 "color: rgb(4, 4, 4);")
-         #控制器版本
+         # 控制器版本
         if pcb_data[3][1] != 'None':
             self.label4.setText(_translate("Dialog", pcb_data[3][1]))
             self.label4.setStyleSheet("color: white;\n"
@@ -2048,7 +2114,7 @@ class ChildWin(QMainWindow, Ui_Dialog):
             self.label4.setStyleSheet("background-color: rgb(231, 231, 231);\n"
                 "color: rgb(4, 4, 4);")
 
-        #提示界面的信息
+        # 提示界面的信息
         if objUART.connect_flag != True:
             self.label11.setText(_translate("Dialog", "请连接扫码枪"))
         elif (objUART.connect_flag == True) and (pcb_data[3][1] == "None"):
@@ -2068,11 +2134,15 @@ class ChildWin(QMainWindow, Ui_Dialog):
         else: 
             self.label11.setText(_translate("Dialog", "程序逻辑出错，请联系开发人员"))
 
-        # Text文本显示
+        # 将textBrowser显示在底端，保证最新的信息被显示
         self.textBrowser.moveCursor(self.textBrowser.textCursor().End)
 
         
     def closeEvent(self, event):
+        """关闭窗口响应事件
+
+        确认关闭后，将UART和CAN的线程控制位置False，从而结束对应的无限循环线程
+        """
         global uart_thread_destroy_flag
         global can_thread_destroy_flag
         # 创建一个消息盒子（提示框）
@@ -2090,8 +2160,8 @@ class ChildWin(QMainWindow, Ui_Dialog):
         quitMsgBox.exec_()
         # 判断返回值，如果点击的是Yes按钮，我们就关闭组件和应用，否则就忽略关闭事件
         if quitMsgBox.clickedButton() == buttonY:
-            uart_thread_destroy_flag = False
-            can_thread_destroy_flag = False
+            uart_thread_destroy_flag = False # 关闭UART
+            can_thread_destroy_flag = False # 关闭CAN
             print("关闭GUI的时候关闭串口和CAN")
             mainwindow.ChildDialog.textBrowser.append("关闭GUI的时候关闭串口和CAN")
             event.accept()
@@ -2102,6 +2172,10 @@ class ChildWin(QMainWindow, Ui_Dialog):
 #       版本界面的类
 ############################################################################################################## 
 class VersionWin(QMainWindow,Ui_version_dialog):
+    """版本界面的类
+
+    显示斯坦德LOGO，版本信息，开发人员信息
+    """
     def __init__(self):
         super(VersionWin, self).__init__()
         self.setupUi(self)
@@ -2111,7 +2185,6 @@ class VersionWin(QMainWindow,Ui_version_dialog):
 ##############################################################################################################
 import inspect
 import ctypes
- 
 def _async_raise(tid, exctype):
     """raises the exception, performs cleanup if needed"""
     tid = ctypes.c_long(tid)
@@ -2136,18 +2209,18 @@ if __name__ == "__main__":
     import threading
     uart_thread_destroy_flag = True
     can_thread_destroy_flag = True
-    pcb_data = [ #测试的数据
+    pcb_data = [ # 测试的数据
         {'report_code': 'None', 
          'task_name':'None',
          'report_date':'None',
          'report_creator':'None'},
-        ['admin_name','None'],#在is_admin中赋值，登录时
-        ['date_time','None'],#在generate_pcb_nub中赋值，最后按下生成PDF按钮时
-        ['pcb_version','None'],#在runuart中赋值，扫码时
+        ['admin_name','None'], # 在is_admin中赋值，登录时
+        ['date_time','None'], # 在generate_pcb_nub中赋值，最后按下生成PDF按钮时
+        ['pcb_version','None'], # 在runuart中赋值，扫码时
         ['test_firmwave_version','None'],
         ['qualified_or_not','True'],
         ['func_firmwave_version','None'],
-        ['pcb_numb','20200806T0001'],#在generate_pcb_nub中赋值，最后按下生成PDF按钮时
+        ['pcb_numb','20200806T0001'], # 在generate_pcb_nub中赋值，最后按下生成PDF按钮时
         ['io_din','None'],
         ['io_dout','None'],
         ['uart115200_packet_loss_rate',10],
@@ -2162,18 +2235,18 @@ if __name__ == "__main__":
         ['can100k_error_rate',35]
     ]
      
-    default_pcb_data = [ #默认的数据，重置数据时候使用
+    default_pcb_data = [ # 默认的数据，重置数据时候使用
         {'report_code': 'None', 
          'task_name':'None',
          'report_date':'None',
          'report_creator':'None'},
-        ['admin_name','None'],#在is_admin中赋值，登录时
-        ['date_time','None'],#在generate_pcb_nub中赋值，最后按下生成PDF按钮时
-        ['pcb_version','None'],#在runuart中赋值，扫码时
+        ['admin_name','None'], # 在is_admin中赋值，登录时
+        ['date_time','None'], # 在generate_pcb_nub中赋值，最后按下生成PDF按钮时
+        ['pcb_version','None'], # 在runuart中赋值，扫码时
         ['test_firmwave_version','None'],
         ['qualified_or_not','None'],
         ['func_firmwave_version','None'],
-        ['pcb_numb','None'],#在generate_pcb_nub中赋值，最后按下生成PDF按钮时
+        ['pcb_numb','None'], # 在generate_pcb_nub中赋值，最后按下生成PDF按钮时
         ['io_din','None'],
         ['io_dout','None'],
         ['uart115200_packet_loss_rate',0],
