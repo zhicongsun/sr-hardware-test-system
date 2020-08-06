@@ -1159,12 +1159,24 @@ class PDFGenerator:
         task_table = Table(self.pcb_data[1:], colWidths=[60 * mm, 120 * mm], rowHeights=12 * mm, style=self.common_style)#调整宽度高度
         story.append(task_table)
 
+        # PCB通信测试结果
+        # UART
         story.append(Spacer(1, 20 * mm))
-        img_uart_loss_rate = reportImage('./matplot_images/20200803001.png')
-        img_uart_loss_rate.drawHeight = 80 * mm
-        img_uart_loss_rate.drawWidth = 130 * mm
-        img_uart_loss_rate.hAlign = TA_LEFT
-        story.append(img_uart_loss_rate)
+        img_uart_path = "./matplot_images/" + pcb_data[7][1] + "UART.png"
+        img_uart = reportImage(img_uart_path)
+        img_uart.drawHeight = 80 * mm
+        img_uart.drawWidth = 130 * mm
+        img_uart.hAlign = TA_LEFT
+        story.append(img_uart)
+
+        # CAN
+        story.append(Spacer(1, 20 * mm))
+        img_can_path = "./matplot_images/" + pcb_data[7][1] + "CAN.png"
+        img_can = reportImage(img_can_path)
+        img_can.drawHeight = 80 * mm
+        img_can.drawWidth = 130 * mm
+        img_can.hAlign = TA_LEFT
+        story.append(img_can)
 
         doc = SimpleDocTemplate(self.file_path + self.filename + ".pdf",
                                 leftMargin=20 * mm, rightMargin=20 * mm, topMargin=20 * mm, bottomMargin=20 * mm)
@@ -1553,22 +1565,11 @@ class DriveUSB2SPI():
             print("无法关闭SPI设备")
 
 ##############################################################################################################
-#       数据库写入函数
+#       向数据库pcb_data和peripheral_data写入数据
 ##############################################################################################################
 import pymysql
 def write_database(pcb_data):
-    try:
-        db = pymysql.connect("localhost","root","SR2020","sr_test")
-        print("已连接数据库sr_test")
-    except:
-        print("连接数据库sr_test失败，以下操作无效，请检查设置")
-    cursor = db.cursor()
-    
-    sql = """INSERT INTO `sr_test`.`pcb_data` 
-            (`admin_name`, `date_time`,`pcb_version`, `test_firmwave_version`,`qualified_or_not`, `func_firmwave_version`, 
-            `pcb_numb`,`io_din`,`io_dout`,`uart115200_packet_loss_rate`,`uart115200_error_rate`,
-            `uart115200_delay_time`,`can50k_packet_loss_rate`,`can50k_error_rate`) 
-             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+    # 要写入的参数赋值
     sr_admin_name = pcb_data[1][1]
     sr_date_time = pcb_data[2][1]
     sr_pcb_version = pcb_data[3][1]
@@ -1583,6 +1584,26 @@ def write_database(pcb_data):
     sr_uart115200_delay_time = pcb_data[12][1]
     sr_can50k_packet_loss_rate = pcb_data[13][1]
     sr_can50k_error_rate = pcb_data[14][1]
+    sr_uart9600_packet_loss_rate = pcb_data[15][1]
+    sr_uart9600_error_rate = pcb_data[16][1]
+    sr_uart9600_delay_time = pcb_data[17][1]
+    sr_can100k_packet_loss_rate = pcb_data[18][1]
+    sr_can100k_error_rate = pcb_data[19][1]
+
+    # 连接数据库并获取光标
+    try:
+        db = pymysql.connect("localhost","root","SR2020","sr_test")
+        print("已连接数据库sr_test")
+    except:
+        print("连接数据库sr_test失败，以下操作无效，请检查设置")
+    cursor = db.cursor()
+
+    # 向数据库的pcb_data表中写入数据
+    sql = """INSERT INTO `sr_test`.`pcb_data` 
+            (`admin_name`, `date_time`,`pcb_version`, `test_firmwave_version`,`qualified_or_not`, `func_firmwave_version`, 
+            `pcb_numb`,`io_din`,`io_dout`,`uart115200_packet_loss_rate`,`uart115200_error_rate`,
+            `uart115200_delay_time`,`can50k_packet_loss_rate`,`can50k_error_rate`) 
+             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
 
     values = (sr_admin_name,sr_date_time,sr_pcb_version,sr_test_firmwave_version,sr_qualified_or_not,sr_func_firmware_version,
     sr_pcb_numb,sr_io_din,sr_io_dout,sr_uart115200_packet_loss_rate,sr_uart115200_error_rate,sr_uart115200_delay_time,
@@ -1594,6 +1615,30 @@ def write_database(pcb_data):
     except:
         db.rollback()
         print("向表pcb_data插入数据失败")
+    
+    # 向数据库的peripheral_data表中写入数据
+    sql = """INSERT INTO `sr_test`.`peripheral_data` 
+        (`pcb_numb`,`io_din`,`io_dout`,
+        `uart115200_packet_loss_rate`,`uart115200_error_rate`,`uart115200_delay_time`,
+        `can50k_packet_loss_rate`,`can50k_error_rate`,
+        `uart9600_packet_loss_rate`,`uart9600_error_rate`,`uart9600_delay_time`,
+        `can100k_packet_loss_rate`,`can100k_error_rate`) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""" 
+   
+    values = (sr_pcb_numb,sr_io_din,sr_io_dout,
+            sr_uart115200_packet_loss_rate,sr_uart115200_error_rate,sr_uart115200_delay_time,
+            sr_can50k_packet_loss_rate,sr_can50k_error_rate,
+            sr_uart9600_packet_loss_rate,sr_uart9600_error_rate,sr_uart9600_delay_time,
+            sr_can100k_packet_loss_rate,sr_can100k_error_rate)
+    try:
+        cursor.execute(sql,values)
+        db.commit()
+        print("成功向表peripheral_data中插入数据")
+    except:
+        db.rollback()
+        print("向表peripheral_data插入数据失败")
+    
+    # 断开与数据库的连接
     try:
         db.close()
         print("已断开与数据库sr_test的连接")
@@ -1601,7 +1646,7 @@ def write_database(pcb_data):
         print("断开连接失败，请检查设置")
 
 ##############################################################################################################
-#       通过读取数据库判断是否为管理员
+#       通过读取数据库administrators_data判断是否为管理员
 ##############################################################################################################
 import pymysql
 def is_admin(admin_name,password):#通过数据库判断是否未管理员，是则返回True,否则返回False
@@ -1646,7 +1691,7 @@ def is_admin(admin_name,password):#通过数据库判断是否未管理员，是
     return allow_open
 
 ##############################################################################################################
-#       读取数据库生成控制板PCB编号的函数
+#       读取数据库pcb_data表生成控制板PCB编号的函数
 ############################################################################################################## 
 import pymysql
 import re
@@ -1713,8 +1758,65 @@ def generate_pcb_numb():#对pcb_numb和date_time都赋值
         else:
             print("生产超过9999个不合格产品，编号不足，请修改程序")
         print("生成不合格编码：%s " % pcb_data[7][1])
-    else:#
+    else:
         print("未进行外设检测，无法正常生成pcb_numb")
+
+##############################################################################################################
+#       根据测试结果绘制UART和CAN统计表格
+##############################################################################################################
+import matplotlib.pyplot as plt
+import os
+
+def draw_line_chart(pcb_numb,peripheral_type,loss_rate,error_rate,delay_time = None):
+
+    # 定义自己的字体，微软雅黑，否则中文显示不出来,这边不用了
+    # myfont = fm.FontProperties(fname=r'.\msyh.ttf') # 设置字体,配合，需要fontproperties = myfont，import matplotlib.font_manager as fm
+
+    plt.rcParams['font.sans-serif'] = ['SimHei'] # 支持中文
+    # 定义显示的数据
+    
+    # 根据检测id速度的类型显示Label
+    if len(loss_rate)==1:
+        x = range(1,2)
+        x_label = ["50K_9600"]
+    elif len(loss_rate)==2:
+        x = range(1,3)
+        x_label = ["50K_9600","100K_115200"]
+    elif len(loss_rate)==3:
+        x = range(1,4)
+        x_label = ["50K_9600","100K_115200","200K_150000"]
+    else:
+        print("输入列表参数包含超过3个元素，有问题")
+        pass
+
+    # 创建画布
+    plt.figure()
+    #绘图
+    plt.plot(x, loss_rate, marker='o', color='r', label='丢包率')
+    plt.plot(x, error_rate, marker='*', color='b', label='误码率')
+    if peripheral_type == "UART": # CAN没有延迟参数
+        plt.plot(x,delay_time,marker='o', color='y', label='传输延迟')
+    elif peripheral_type == "CAN":
+        pass
+
+    # 显示图例（使绘制生效）
+    plt.legend()
+    # 横坐标名称
+    plt.xlabel('波特率')
+    # 横坐标刻度转换为文字
+    plt.xticks([1,2],x_label)
+    # 纵坐标名称
+    plt.ylabel('% / ms')
+    # 标题
+    if peripheral_type == "UART":
+        plt.title("UART通信数据统计")
+    elif peripheral_type == "CAN":
+        plt.title("CAN通信数据统计")
+    else:
+        pass
+    # 保存图片到本地，命名格式：pcb_numb + 外设类型
+    img_path = os.getcwd() + "/matplot_images/" + pcb_numb + peripheral_type + ".png"
+    plt.savefig(img_path,dpi=500,bbox_inches = 'tight')
 
 ##############################################################################################################
 #       主界面的类
@@ -1824,6 +1926,14 @@ class ChildWin(QMainWindow, Ui_Dialog):
         pcb_data[0]['task_name'] = '第四代电气PCB测试'
         pcb_data[0]['report_date'] = pcb_data[2][1]
         pcb_data[0]['report_creator'] = pcb_data[1][1]
+
+        uart_loss = [pcb_data[10][1],pcb_data[15][1]]
+        uart_error = [pcb_data[11][1],pcb_data[16][1]]
+        uart_delay = [pcb_data[12][1],pcb_data[17][1]]
+        can_loss = [pcb_data[13][1],pcb_data[18][1]]
+        can_error = [pcb_data[14][1],pcb_data[19][1]]
+        draw_line_chart(pcb_data[7][1],"UART",uart_loss,uart_error,uart_delay) # 绘制UART统计图
+        draw_line_chart(pcb_data[7][1],"CAN",can_loss,can_error) # 绘制CAN统计图
 
         test_pdf.genTaskPDF(pcb_data)#生成PDF
         self.label11.setText(_translate("Dialog", "已生成PDF,写入数据库，生成二维码，请查看"))
@@ -1955,36 +2065,46 @@ if __name__ == "__main__":
         ['test_firmwave_version','None'],
         ['qualified_or_not','True'],
         ['func_firmwave_version','None'],
-        ['pcb_numb','None'],#在generate_pcb_nub中赋值，最后按下生成PDF按钮时
+        ['pcb_numb','20200806T0001'],#在generate_pcb_nub中赋值，最后按下生成PDF按钮时
         ['io_din','None'],
         ['io_dout','None'],
-        ['uart115200_packet_loss_rate','None'],
-        ['uart115200_error_rate','None'],
-        ['uart115200_delay_time','None'],
-        ['can50k_packet_loss_rate','None'],
-        ['can50k_error_rate','None']
+        ['uart115200_packet_loss_rate',10],
+        ['uart115200_error_rate',20],
+        ['uart115200_delay_time',100],
+        ['can50k_packet_loss_rate',35],
+        ['can50k_error_rate',45],
+        ['uart9600_packet_loss_rate',20],
+        ['uart9600_error_rate',10],
+        ['uart9600_delay_time',200],
+        ['can100k_packet_loss_rate',45],
+        ['can100k_error_rate',35]
     ]
-    default_pcb_data = [ #初始化数据
+     
+    default_pcb_data = [ #默认的数据，重置数据时候使用
         {'report_code': 'None', 
          'task_name':'None',
          'report_date':'None',
          'report_creator':'None'},
-        ['admin_name','None'],
-        ['date_time','None'],
-        ['pcb_version','None'],
+        ['admin_name','None'],#在is_admin中赋值，登录时
+        ['date_time','None'],#在generate_pcb_nub中赋值，最后按下生成PDF按钮时
+        ['pcb_version','None'],#在runuart中赋值，扫码时
         ['test_firmwave_version','None'],
         ['qualified_or_not','None'],
         ['func_firmwave_version','None'],
-        ['pcb_numb','None'],
+        ['pcb_numb','None'],#在generate_pcb_nub中赋值，最后按下生成PDF按钮时
         ['io_din','None'],
         ['io_dout','None'],
-        ['uart115200_packet_loss_rate','None'],
-        ['uart115200_error_rate','None'],
-        ['uart115200_delay_time','None'],
-        ['can50k_packet_loss_rate','None'],
-        ['can50k_error_rate','None']
+        ['uart115200_packet_loss_rate',0],
+        ['uart115200_error_rate',0],
+        ['uart115200_delay_time',0],
+        ['can50k_packet_loss_rate',0],
+        ['can50k_error_rate',0],
+        ['uart9600_packet_loss_rate',0],
+        ['uart9600_error_rate',0],
+        ['uart9600_delay_time',0],
+        ['can100k_packet_loss_rate',0],
+        ['can100k_error_rate',0]
     ]
-
     # lock = threading.lock()
     test_pdf = PDFGenerator()#生成PDF实例，规定PDF格式
 
