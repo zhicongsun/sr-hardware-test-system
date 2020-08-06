@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1391</width>
-    <height>659</height>
+    <height>665</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -28,7 +28,7 @@
      <x>1000</x>
      <y>120</y>
      <width>341</width>
-     <height>151</height>
+     <height>221</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -39,7 +39,7 @@
    <property name="geometry">
     <rect>
      <x>1000</x>
-     <y>280</y>
+     <y>350</y>
      <width>381</width>
      <height>23</height>
     </rect>
@@ -52,7 +52,7 @@
    <property name="geometry">
     <rect>
      <x>540</x>
-     <y>10</y>
+     <y>20</y>
      <width>221</width>
      <height>51</height>
     </rect>
@@ -76,9 +76,9 @@
    <property name="geometry">
     <rect>
      <x>1000</x>
-     <y>320</y>
-     <width>351</width>
-     <height>71</height>
+     <y>390</y>
+     <width>341</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="font">
@@ -112,7 +112,7 @@ color: rgb(255, 0, 0);</string>
      <x>980</x>
      <y>80</y>
      <width>401</width>
-     <height>331</height>
+     <height>381</height>
     </rect>
    </property>
    <property name="font">
@@ -131,9 +131,9 @@ color: rgb(255, 0, 0);</string>
    <property name="geometry">
     <rect>
      <x>980</x>
-     <y>430</y>
+     <y>470</y>
      <width>401</width>
-     <height>211</height>
+     <height>171</height>
     </rect>
    </property>
    <property name="font">
@@ -151,9 +151,9 @@ color: rgb(255, 0, 0);</string>
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>40</y>
-      <width>141</width>
-      <height>121</height>
+      <y>30</y>
+      <width>131</width>
+      <height>101</height>
      </rect>
     </property>
     <property name="font">
@@ -184,7 +184,7 @@ background-color: rgb(85, 170, 0);
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>180</y>
+      <y>140</y>
       <width>81</width>
       <height>20</height>
      </rect>
@@ -196,10 +196,10 @@ background-color: rgb(85, 170, 0);
    <widget class="QPushButton" name="pushButton2">
     <property name="geometry">
      <rect>
-      <x>220</x>
-      <y>40</y>
-      <width>141</width>
-      <height>121</height>
+      <x>230</x>
+      <y>30</y>
+      <width>121</width>
+      <height>101</height>
      </rect>
     </property>
     <property name="font">
