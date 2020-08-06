@@ -245,20 +245,20 @@ class Ui_MainWindow(object):
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(1391, 659)
+        Dialog.resize(1391, 665)
         Dialog.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         Dialog.setAutoFillBackground(False)
-        # Dialog.setSizeGripEnabled(False)#每次重新用.ui生产py后都要注释掉，否则报错
+        # Dialog.setSizeGripEnabled(False)
         self.textBrowser = QtWidgets.QTextBrowser(Dialog)
-        self.textBrowser.setGeometry(QtCore.QRect(1000, 120, 341, 151))
+        self.textBrowser.setGeometry(QtCore.QRect(1000, 120, 341, 221))
         self.textBrowser.setAutoFillBackground(False)
         self.textBrowser.setObjectName("textBrowser")
         self.progressBar = QtWidgets.QProgressBar(Dialog)
-        self.progressBar.setGeometry(QtCore.QRect(1000, 280, 381, 23))
+        self.progressBar.setGeometry(QtCore.QRect(1000, 350, 381, 23))
         self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName("progressBar")
         self.label = QtWidgets.QLabel(Dialog)
-        self.label.setGeometry(QtCore.QRect(540, 10, 221, 51))
+        self.label.setGeometry(QtCore.QRect(540, 20, 221, 51))
         font = QtGui.QFont()
         font.setFamily("微软雅黑")
         font.setPointSize(12)
@@ -268,7 +268,7 @@ class Ui_Dialog(object):
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.label11 = QtWidgets.QLabel(Dialog)
-        self.label11.setGeometry(QtCore.QRect(1000, 320, 351, 71))
+        self.label11.setGeometry(QtCore.QRect(1000, 390, 341, 51))
         font = QtGui.QFont()
         font.setFamily("微软雅黑")
         font.setPointSize(9)
@@ -282,7 +282,7 @@ class Ui_Dialog(object):
         self.label11.setWordWrap(False)
         self.label11.setObjectName("label11")
         self.groupBox_2 = QtWidgets.QGroupBox(Dialog)
-        self.groupBox_2.setGeometry(QtCore.QRect(980, 80, 401, 331))
+        self.groupBox_2.setGeometry(QtCore.QRect(980, 80, 401, 381))
         font = QtGui.QFont()
         font.setFamily("微软雅黑")
         font.setPointSize(9)
@@ -291,7 +291,7 @@ class Ui_Dialog(object):
         self.groupBox_2.setFont(font)
         self.groupBox_2.setObjectName("groupBox_2")
         self.groupBox_3 = QtWidgets.QGroupBox(Dialog)
-        self.groupBox_3.setGeometry(QtCore.QRect(980, 430, 401, 211))
+        self.groupBox_3.setGeometry(QtCore.QRect(980, 470, 401, 171))
         font = QtGui.QFont()
         font.setFamily("微软雅黑")
         font.setPointSize(9)
@@ -300,7 +300,7 @@ class Ui_Dialog(object):
         self.groupBox_3.setFont(font)
         self.groupBox_3.setObjectName("groupBox_3")
         self.pushButton1 = QtWidgets.QPushButton(self.groupBox_3)
-        self.pushButton1.setGeometry(QtCore.QRect(50, 40, 141, 121))
+        self.pushButton1.setGeometry(QtCore.QRect(50, 30, 131, 101))
         font = QtGui.QFont()
         font.setFamily("微软雅黑")
         font.setPointSize(9)
@@ -315,10 +315,10 @@ class Ui_Dialog(object):
 "")
         self.pushButton1.setObjectName("pushButton1")
         self.checkBox = QtWidgets.QCheckBox(self.groupBox_3)
-        self.checkBox.setGeometry(QtCore.QRect(10, 180, 81, 20))
+        self.checkBox.setGeometry(QtCore.QRect(10, 140, 81, 20))
         self.checkBox.setObjectName("checkBox")
         self.pushButton2 = QtWidgets.QPushButton(self.groupBox_3)
-        self.pushButton2.setGeometry(QtCore.QRect(220, 40, 141, 121))
+        self.pushButton2.setGeometry(QtCore.QRect(230, 30, 121, 101))
         font = QtGui.QFont()
         font.setFamily("微软雅黑")
         font.setPointSize(9)
@@ -969,6 +969,7 @@ class Ui_Dialog(object):
         self.label1_7.setText(_translate("Dialog", "其他2"))
         self.label5_7.setText(_translate("Dialog", "Note:Null"))
 
+
 ##############################################################################################################
 #       版本界面.ui生成的类
 ##############################################################################################################
@@ -1122,9 +1123,9 @@ class PDFGenerator:
         
     def genTaskPDF(self,pcb_data):
         self.pcb_data=pcb_data
-        print(self.pcb_data[7][1])#用pcb_nub作为二维码数据
+        print("pcb_numb编号：" + self.pcb_data[7][1])#用pcb_nub作为二维码数据
+        mainwindow.ChildDialog.textBrowser.append("pcb_numb编号：" + self.pcb_data[7][1])
         self.filename = self.pcb_data[7][1] 
-        print(self.filename)
         story = []
         # 首页内容
         story.append(Spacer(1, 20 * mm))
@@ -1182,6 +1183,7 @@ class PDFGenerator:
                                 leftMargin=20 * mm, rightMargin=20 * mm, topMargin=20 * mm, bottomMargin=20 * mm)
         doc.build(story)
         print('已经生成PDF，文件名为 %s.pdf，请查看！' % self.pcb_data[7][1])#用pcb_num命名
+        mainwindow.ChildDialog.textBrowser.append('已经生成PDF，文件名为 %s.pdf，请查看！' % self.pcb_data[7][1])
 
 ##############################################################################################################
 #       二维码打印函数
@@ -1270,22 +1272,27 @@ class DriveUART:
         self.connect_flag = True
         self.hd_flag = [0,0]#硬件连接标志位
         print("init the DriveUART")
+        mainwindow.ChildDialog.textBrowser.append("init the DriveUART")
 
     def connect_uart(self):
         plist = list(serial.tools.list_ports.comports())
         if len(plist) <= 0:#判断端口是否硬件连接
             print("没有发现端口!")
+            mainwindow.ChildDialog.textBrowser.append("没有发现端口")
             self.connect_flag = False
         else:#已硬件连接，尝试软件连接
             plist_0 = list(plist[0])
             serialName = plist_0[0]       #先自动检测串口， 检测到可用串口，取出串口名
             print("可用端口>>>",serialName)
+            mainwindow.ChildDialog.textBrowser.append("可用端口>>> " + str(serialName))
             try:#尝试软件连接
                 self.ser = serial.Serial(serialName, 115200, timeout=1)  # timeout=1s
                 print("已连接端口>>>", self.ser.name,"波特率115200")
+                mainwindow.ChildDialog.textBrowser.append("已连接端口>>> " + self.ser.name + " 波特率115200")
                 self.connect_flag = True
             except:#软件连接失败，原因未知，插拔重试
                 print("尝试连接端口失败，请拔下重试，并且检查设置！")
+                mainwindow.ChildDialog.textBrowser.append("尝试连接端口失败，请拔下重试，并且检查设置！")
                 self.connect_flag = False
         return self.connect_flag
     
@@ -1302,6 +1309,7 @@ class DriveUART:
                 self.line = self.ser.readline()                              #读取一行数据
                 if len(self.line) !=0:
                     print("Rsponse : %s" % self.line.decode('utf-8'))  #串口接收到数据，然后显示
+                    mainwindow.ChildDialog.textBrowser.append("Rsponse : %s" % self.line.decode('utf-8'))
                     data[0] = True
                 else:
                     data[0] = False
@@ -1311,8 +1319,10 @@ class DriveUART:
                     #情况二：拔掉，重新硬件连接上后，还未软件连接
                 if self.connect_uart()==False:
                     print("接受数据时串口被拔下！")
+                    mainwindow.ChildDialog.textBrowser.append("接受数据时串口被拔下！")
                 else:
                     print("端口重连成功！")
+                    mainwindow.ChildDialog.textBrowser.append("端口重连成功！")
 
         else:#无硬件连接，原有的软件连接关闭
             self.hd_flag[1]=0
@@ -1322,6 +1332,7 @@ class DriveUART:
                 pass
             if (self.hd_flag[0]==1 and self.hd_flag[1]==0):#检测第一次硬件拔掉的下降沿，该字符只显示一次
                 print("端口硬件未连接！软件连接已关闭！")
+                mainwindow.ChildDialog.textBrowser.append("端口硬件未连接！软件连接已关闭！")
         self.hd_flag[0] = self.hd_flag[1]
         return data
 
@@ -1340,6 +1351,7 @@ def runuart():
         objUART.ser.close()#得到线程结束标识，则关闭串口
     except:
         print("串口还没打开，不用重复关闭")
+        mainwindow.ChildDialog.textBrowser.append("串口还没打开，不用重复关闭")
 ##############################################################################################################
 #       CAN类
 ##############################################################################################################
@@ -1357,8 +1369,10 @@ class DriveCAN(PCANBasic):
             # An error occurred, get a text describing the error and show it
             result = self.GetErrorText(result)
             print(result[1])
+            mainwindow.ChildDialog.textBrowser.append(str(result[1]))
         else:
-            print ("PCAN-USB (Ch-1) was initialized")
+            print("PCAN-USB (Ch-1) was initialized")
+            mainwindow.ChildDialog.textBrowser.append("PCAN-USB (Ch-1) was initialized")
 
     def can_filter(self,
         chanel=PCAN_USBBUS1,
@@ -1371,6 +1385,7 @@ class DriveCAN(PCANBasic):
             # An error occurred, get a text describing the error and show it
             result = self.GetErrorText(result)
             print(result[1])
+            mainwindow.ChildDialog.textBrowser.append(str(result[1]))
         else:
             # The message filter is configured to receive the IDs 2,3,4 and 5 on the PCAN-USB, Channel 1
             result = self.FilterMessages(chanel,from_id,to_id,fileter_mode)
@@ -1378,8 +1393,10 @@ class DriveCAN(PCANBasic):
                 # An error occurred, get a text describing the error and show it
                 result = objPCAN.GetErrorText(result)
                 print(result[1])
+                mainwindow.ChildDialog.textBrowser.append(result[1])
             else:
                 print("Filter successfully configured for IDs from %d to %d" % (from_id,to_id))
+                mainwindow.ChildDialog.textBrowser.append("Filter successfully configured for IDs from %d to %d" % (from_id,to_id))
 
     def can_read(self,chanel=PCAN_USBBUS1): #默认参数：通道
          # All initialized channels are released
@@ -1420,6 +1437,7 @@ class DriveCAN(PCANBasic):
                           Result.DATA[5],
                           Result.DATA[6],
                           Result.DATA[7]))
+                          
         else:
             pass
    
@@ -1442,8 +1460,10 @@ class DriveCAN(PCANBasic):
             # An error occurred, get a text describing the error and show it
             result = self.GetErrorText(result)
             print(result)
+            mainwindow.ChildDialog.textBrowser.append(result)
         else:
             print("Message sent successfully")
+            mainwindow.ChildDialog.textBrowser.append("Message sent successfully")
 
 ##############################################################################################################
 #       CAN任务
@@ -1456,8 +1476,10 @@ def runcan():
     try:
         objPCAN.Uninitialize(PCAN_NONEBUS)
         print("成功关闭了CAN口")
+        mainwindow.ChildDialog.textBrowser.append("成功关闭了CAN口")
     except:
         print("已经关闭CAN口，不用重新关闭")
+        mainwindow.ChildDialog.textBrowser.append("已经关闭CAN口，不用重新关闭")
 
 ##############################################################################################################
 #       USB2SPI类
@@ -1485,22 +1507,28 @@ class DriveUSB2SPI():
         self.ret = USB_ScanDevice(byref(self.DevHandles))
         if(self.ret == 0):
             print("没有SPI设备连接")
+            mainwindow.ChildDialog.textBrowser.append("没有SPI设备连接")
         else:
             print("有 %d SPI设备连接!" % self.ret)
+            mainwindow.ChildDialog.textBrowser.append("有 %d SPI设备连接!" % self.ret)
             # 打开设备
             self.ret = USB_OpenDevice(self.DevHandles[self.DevIndex])
             if(bool(self.ret)==False):
                 print("打开SPI设备失败")
+                mainwindow.ChildDialog.textBrowser.append("打开SPI设备失败")
             else:
                 print("成功打开SPI设备")
+                mainwindow.ChildDialog.textBrowser.append("成功打开SPI设备")
                 # 获取设备信息
                 USB2XXXInfo = DEVICE_INFO()
                 USB2XXXFunctionString = (c_char * 256)()
                 self.ret = DEV_GetDeviceInfo(self.DevHandles[self.DevIndex],byref(USB2XXXInfo),byref(USB2XXXFunctionString))
                 if(bool(self.ret)==False):
                     print("Get device infomation faild!")
+                    mainwindow.ChildDialog.textBrowser.append("Get device infomation faild!")
                 else:
                     print("USB2XXX device infomation:")
+                    mainwindow.ChildDialog.textBrowser.append("Get USB2XXX device infomation")
                     print("--Firmware Name: %s"%bytes(USB2XXXInfo.FirmwareName).decode('ascii'))
                     print("--Firmware Version: v%d.%d.%d"%((USB2XXXInfo.FirmwareVersion>>24)&0xFF,(USB2XXXInfo.FirmwareVersion>>16)&0xFF,USB2XXXInfo.FirmwareVersion&0xFFFF))
                     print("--Hardware Version: v%d.%d.%d"%((USB2XXXInfo.HardwareVersion>>24)&0xFF,(USB2XXXInfo.HardwareVersion>>16)&0xFF,USB2XXXInfo.HardwareVersion&0xFFFF))
@@ -1523,18 +1551,24 @@ class DriveUSB2SPI():
                     self.ret = SPI_Init(self.DevHandles[self.DevIndex],SPI2_CS0,byref(SPIConfig))
                     if(self.ret != SPI_SUCCESS):
                         print("初始化SPI失败")
+                        mainwindow.ChildDialog.textBrowser.append("初始化SPI失败")
                     else:
                         print("成功初始化SPI")
+                        mainwindow.ChildDialog.textBrowser.append("成功初始化SPI")
     def spi_master_read(self):
         self.ReadBuffer = (c_ubyte * 16)()
         self.ret = SPI_ReadBytes(self.DevHandles[self.DevIndex],SPI2_CS0,byref(self.ReadBuffer),len(self.ReadBuffer))
         if(self.ret != SPI_SUCCESS):
             print("SPI读取数据失败")
+            mainwindow.ChildDialog.textBrowser.append("SPI读取数据失败")
         else:
             print("SPI 读取的数据为:")
+            mainwindow.ChildDialog.textBrowser.append("SPI 读取的数据为:")
             for i in range(0,len(self.ReadBuffer)):
                 print("%02X " % self.ReadBuffer[i],end='')
+                mainwindow.ChildDialog.textBrowser.append("%02X " % self.ReadBuffer[i])
             print("")
+            mainwindow.ChildDialog.textBrowser.append(" ")
 
     def spi_master_write(self):
         self.WriteBuffer = (c_ubyte * 16)()
@@ -1543,26 +1577,34 @@ class DriveUSB2SPI():
         self.ret = SPI_WriteBytes(self.DevHandles[self.DevIndex],SPI2_CS0,byref(self.WriteBuffer),len(self.WriteBuffer))
         if(self.ret != SPI_SUCCESS):
             print("SPI发送数据失败")
+            mainwindow.ChildDialog.textBrowser.append("SPI发送数据失败")
         else:
             print("SPI发送数据成功")
+            mainwindow.ChildDialog.textBrowser.append("SPI发送数据成功")
 
     def spi_master_write_and_read(self):
         self.ret = SPI_WriteReadBytes(self.DevHandles[self.DevIndex],SPI2_CS0,byref(self.WriteBuffer),len(self.WriteBuffer),byref(self.ReadBuffer),len(self.ReadBuffer),10)
         if(self.ret != SPI_SUCCESS):
             print("SPI 写读数据失败")
+            mainwindow.ChildDialog.textBrowser.append("SPI 写读数据失败")
         else:
             print("SPI 写读的数据为:")
+            mainwindow.ChildDialog.textBrowser.append("SPI 写读的数据为:")
             for i in range(0,len(self.ReadBuffer)):
                 print("%02X " % self.ReadBuffer[i],end='')
+                mainwindow.ChildDialog.textBrowser.append("%02X " % self.ReadBuffer[i])
             print("")
+            mainwindow.ChildDialog.textBrowser.append("")
     
     def spi_close(self):
         self.ret = USB_CloseDevice(self.DevHandles[self.DevIndex])
         DLL_FreeLib()#释放dll资源
         if(bool(self.ret)):
             print("成功关闭SPI设备")
+            mainwindow.ChildDialog.textBrowser.append("成功关闭SPI设备")
         else:
             print("无法关闭SPI设备")
+            mainwindow.ChildDialog.textBrowser.append("无法关闭SPI设备")
 
 ##############################################################################################################
 #       向数据库pcb_data和peripheral_data写入数据
@@ -1594,8 +1636,10 @@ def write_database(pcb_data):
     try:
         db = pymysql.connect("localhost","root","SR2020","sr_test")
         print("已连接数据库sr_test")
+        mainwindow.ChildDialog.textBrowser.append("已连接数据库sr_test")
     except:
         print("连接数据库sr_test失败，以下操作无效，请检查设置")
+        mainwindow.ChildDialog.textBrowser.append("连接数据库sr_test失败，以下操作无效，请检查设置")
     cursor = db.cursor()
 
     # 向数据库的pcb_data表中写入数据
@@ -1612,9 +1656,11 @@ def write_database(pcb_data):
         cursor.execute(sql,values)
         db.commit()
         print("成功向表pcb_data中插入数据")
+        mainwindow.ChildDialog.textBrowser.append("成功向表pcb_data中插入数据")
     except:
         db.rollback()
         print("向表pcb_data插入数据失败")
+        mainwindow.ChildDialog.textBrowser.append("向表pcb_data插入数据失败")
     
     # 向数据库的peripheral_data表中写入数据
     sql = """INSERT INTO `sr_test`.`peripheral_data` 
@@ -1634,16 +1680,20 @@ def write_database(pcb_data):
         cursor.execute(sql,values)
         db.commit()
         print("成功向表peripheral_data中插入数据")
+        mainwindow.ChildDialog.textBrowser.append("成功向表peripheral_data中插入数据")
     except:
         db.rollback()
         print("向表peripheral_data插入数据失败")
+        mainwindow.ChildDialog.textBrowser.append("向表peripheral_data插入数据失败")
     
     # 断开与数据库的连接
     try:
         db.close()
         print("已断开与数据库sr_test的连接")
+        mainwindow.ChildDialog.textBrowser.append("已断开与数据库sr_test的连接")
     except:
         print("断开连接失败，请检查设置")
+        mainwindow.ChildDialog.textBrowser.append("断开连接失败，请检查设置")
 
 ##############################################################################################################
 #       通过读取数据库administrators_data判断是否为管理员
@@ -1654,8 +1704,10 @@ def is_admin(admin_name,password):#通过数据库判断是否未管理员，是
     try:
         db = pymysql.connect("localhost","root","SR2020","sr_test")
         print("已连接数据库sr_test")
+        mainwindow.ChildDialog.textBrowser.append("已连接数据库sr_test")
     except:
         print("连接数据库sr_test失败，以下操作无效，请检查设置")
+        mainwindow.ChildDialog.textBrowser.append("连接数据库sr_test失败，以下操作无效，请检查设置")
     cursor = db.cursor()
     search_cmd = """select * from sr_test.administrators_data"""
     cursor.execute(search_cmd)
@@ -1665,29 +1717,33 @@ def is_admin(admin_name,password):#通过数据库判断是否未管理员，是
     for i in range(len(admin_data)):
         each_result.append((admin_name in admin_data[i]))
     result = True in each_result
-    print(each_result)
-    
     if result == True:
         id_admin = each_result.index(True)#记录是哪个用户
         print("用户 %s 存在" %admin_name)
+        mainwindow.ChildDialog.textBrowser.append("用户 %s 存在" %admin_name)
         if password == admin_data[id_admin][1]:#判断密码是否正确
             allow_open[0] = True
             print("用户 %s 密码正确" % admin_name)
+            mainwindow.ChildDialog.textBrowser.append("用户 %s 密码正确" % admin_name)
             pcb_data[1][1] = admin_name#为数据库的pcb_data的管理员名字赋值
             allow_open[1] = "你好管理员"
         else:
             allow_open[0] = False
             print("用户 %s 密码错误" % admin_name)
+            mainwindow.ChildDialog.textBrowser.append("用户 %s 密码错误" % admin_name)
             allow_open[1]="用户存在，密码错误"
     else:
         print("用户不存在")
+        mainwindow.ChildDialog.textBrowser.append("用户不存在")
         allow_open[1] = "用户不存在"
     
     try:
         db.close()
         print("已断开与数据库sr_test的连接")
+        mainwindow.ChildDialog.textBrowser.append("已断开与数据库sr_test的连接")
     except:
         print("断开连接失败，请检查设置")
+        mainwindow.ChildDialog.textBrowser.append("断开连接失败，请检查设置")
     return allow_open
 
 ##############################################################################################################
@@ -1704,8 +1760,10 @@ def generate_pcb_numb():#对pcb_numb和date_time都赋值
     try:
         db = pymysql.connect("localhost","root","SR2020","sr_test")
         print("已连接数据库sr_test")
+        mainwindow.ChildDialog.textBrowser.append("已连接数据库sr_test")
     except:
         print("连接数据库sr_test失败，以下操作无效，请检查设置")
+        mainwindow.ChildDialog.textBrowser.append("连接数据库sr_test失败，以下操作无效，请检查设置")
     cursor = db.cursor()
     search_cmd = """select * from sr_test.pcb_data"""
     cursor.execute(search_cmd)
@@ -1713,8 +1771,10 @@ def generate_pcb_numb():#对pcb_numb和date_time都赋值
     try:
         db.close()
         print("已断开与数据库sr_test的连接")
+        mainwindow.ChildDialog.textBrowser.append("已断开与数据库sr_test的连接")
     except:
         print("断开连接失败，请检查设置")
+        mainwindow.ChildDialog.textBrowser.append("断开连接失败，请检查设置")
     
     #产生pcb_numb
     now = datetime.datetime.now()
@@ -1730,6 +1790,7 @@ def generate_pcb_numb():#对pcb_numb和date_time都赋值
             each_result.append('False')
         else:
             print("检测pcb_numb时发现数据库内容异常，请检查")
+            mainwindow.ChildDialog.textBrowser.append("检测pcb_numb时发现数据库内容异常，请检查")
 
     pcb_data[2][1] = now.strftime("%Y-%m-%d %H:%M:%S")#为数据库的pcb_data的date_time赋值
     if pcb_data[5][1] == "True":#当前待加入的pcb是合格的，产生合格编号否则产生不合格编号，编号格式：日期+T/F+合格/不合格编号
@@ -1744,7 +1805,9 @@ def generate_pcb_numb():#对pcb_numb和date_time都赋值
             pcb_data[7][1] = now_ymd + "T" + str(numb)        
         else:
             print("生产超过9999个合格产品，编号不足，请修改程序")
+            mainwindow.ChildDialog.textBrowser.append("生产超过9999个合格产品，编号不足，请修改程序")
         print("生成合格编码：%s " % pcb_data[7][1])
+        mainwindow.ChildDialog.textBrowser.append("生成合格编码：%s " % pcb_data[7][1])
     elif pcb_data[5][1] == "False":
         numb = each_result.count('False')+1
         if len(str(numb)) == 1:
@@ -1757,9 +1820,12 @@ def generate_pcb_numb():#对pcb_numb和date_time都赋值
             pcb_data[7][1] = now_ymd + "F" + str(numb)        
         else:
             print("生产超过9999个不合格产品，编号不足，请修改程序")
+            mainwindow.ChildDialog.textBrowser.append("生产超过9999个不合格产品，编号不足，请修改程序")
         print("生成不合格编码：%s " % pcb_data[7][1])
+        mainwindow.ChildDialog.textBrowser.append("生成不合格编码：%s " % pcb_data[7][1])
     else:
         print("未进行外设检测，无法正常生成pcb_numb")
+        mainwindow.ChildDialog.textBrowser.append("未进行外设检测，无法正常生成pcb_numb")
 
 ##############################################################################################################
 #       根据测试结果绘制UART和CAN统计表格
@@ -1787,6 +1853,7 @@ def draw_line_chart(pcb_numb,peripheral_type,loss_rate,error_rate,delay_time = N
         x_label = ["50K_9600","100K_115200","200K_150000"]
     else:
         print("输入列表参数包含超过3个元素，有问题")
+        mainwindow.ChildDialog.textBrowser.append("输入列表参数包含超过3个元素，有问题")
         pass
 
     # 创建画布
@@ -1870,6 +1937,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                 uart_thread_destroy_flag = False
                 can_thread_destroy_flag = False
                 print("关闭GUI的时候关闭串口和CAN")
+                mainwindow.ChildDialog.textBrowser.append("关闭GUI的时候关闭串口和CAN")
                 event.accept()
             else:
                 event.ignore()
@@ -1880,7 +1948,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 ##############################################################################################################
 import datetime
 import webbrowser
-
+import os
 class ChildWin(QMainWindow, Ui_Dialog):
     #定义信号
     def __init__(self):
@@ -1904,6 +1972,7 @@ class ChildWin(QMainWindow, Ui_Dialog):
     def processtrigger(self,q):
         #输出那个Qmenu对象被点击
         print(q.text()+'is triggeres')
+        mainwindow.ChildDialog.textBrowser.append(q.text()+'被点击')
         if q.text() == "Version":
             self.VersionDialog.show()#打开版本界面
         elif q.text() == "Help Document":
@@ -1939,7 +2008,16 @@ class ChildWin(QMainWindow, Ui_Dialog):
         self.label11.setText(_translate("Dialog", "已生成PDF,写入数据库，生成二维码，请查看"))
         write_database(pcb_data)#写入数据库
         print_barcode(pcb_data[7][1])#pcb_numb作为编号，生成二维码
+        try:
+            get_text = mainwindow.ChildDialog.textBrowser.toPlainText()
+            str_text = str(get_text)
+            f = open('./txt/' + pcb_data[7][1] + '.txt', 'w') # 将过程写入txt
+            print(f.write('{}'.format(str_text)))
+            f.close()
+        except Exception as e:
+            print(e)
         pcb_data = default_pcb_data.copy()#写入数据一次后重置为默认数据
+        
         
     def mytimer(self):#定时器刷新GUI界面
         timer = QTimer(self)
@@ -1990,6 +2068,9 @@ class ChildWin(QMainWindow, Ui_Dialog):
         else: 
             self.label11.setText(_translate("Dialog", "程序逻辑出错，请联系开发人员"))
 
+        # Text文本显示
+        self.textBrowser.moveCursor(self.textBrowser.textCursor().End)
+
         
     def closeEvent(self, event):
         global uart_thread_destroy_flag
@@ -2012,6 +2093,7 @@ class ChildWin(QMainWindow, Ui_Dialog):
             uart_thread_destroy_flag = False
             can_thread_destroy_flag = False
             print("关闭GUI的时候关闭串口和CAN")
+            mainwindow.ChildDialog.textBrowser.append("关闭GUI的时候关闭串口和CAN")
             event.accept()
         else:
             event.ignore()
@@ -2106,6 +2188,10 @@ if __name__ == "__main__":
         ['can100k_error_rate',0]
     ]
     # lock = threading.lock()
+    
+    app = QApplication(sys.argv) 
+    mainwindow = MainWindow()
+
     test_pdf = PDFGenerator()#生成PDF实例，规定PDF格式
 
     objUART = DriveUART()#生成串口实例
@@ -2114,9 +2200,6 @@ if __name__ == "__main__":
     objPCAN = DriveCAN()#CAN实例
     objPCAN.can_init()
     objPCAN.can_filter()
-
-    app = QApplication(sys.argv) 
-    mainwindow = MainWindow()
 
     uart_thread = threading.Thread(target=runuart)
     uart_thread.start()
