@@ -1085,9 +1085,16 @@ pdfmetrics.registerFont(TTFont('pingbold', 'msyh.ttf'))
 
 # 生成PDF文件
 class PDFGenerator:
+    """PDF类
+
+    生成PDF
+    """
     def __init__(self):
-        #规定格式规范
-        self.file_path = './pdfs/'#当前文件夹
+        """构造函数
+
+        规定PDF保存路径，PDF的格式规范
+        """
+        self.file_path = './pdfs/' # 保存路径，pdfs文件夹
         self.title_style = ParagraphStyle(name="TitleStyle", fontName="pingbold", fontSize=48, alignment=TA_LEFT,)
         self.sub_title_style = ParagraphStyle(name="SubTitleStyle", fontName="pingbold", fontSize=32,
                                               textColor=colors.HexColor(0x666666), alignment=TA_LEFT, )
@@ -1122,8 +1129,12 @@ class PDFGenerator:
                                      ])
         
     def genTaskPDF(self,pcb_data):
+        """生成PDF
+
+        pcb_data的信息通过表格显示，UART等外设的通信测试结果折线图表示
+        """
         self.pcb_data=pcb_data
-        print("pcb_numb编号：" + self.pcb_data[7][1])#用pcb_nub作为二维码数据
+        print("pcb_numb编号：" + self.pcb_data[7][1]) # 用pcb_nub作为二维码数据
         mainwindow.ChildDialog.textBrowser.append("pcb_numb编号：" + self.pcb_data[7][1])
         self.filename = self.pcb_data[7][1] 
         story = []
@@ -1195,55 +1206,54 @@ import qrcode
 import os
 
 def print_barcode(imgname):
+    """打印二维码函数
+    
+    从官方的print库修改过来，可支持大部分打印机机型，功能是生成二维码图片并保存在barcode文件夹，接着调用打印机打印该二维码图片
+    """
+    # 生成二维码并保存在barcode文件夹，以imgname.png命名
     img = qrcode.make(imgname)
     img_path = os.getcwd() + "/barcode/" + imgname + ".png"
     img.save(img_path)
 
+    #向二维码图片的底端中加入imgname的文字，再次保存覆盖原文件
     ttfont = ImageFont.truetype("msyh.ttf",20) 
     im = Image.open(img_path)
     draw = ImageDraw.Draw(im)
     draw.text((35,250),imgname, fill="#000000",font=ttfont)
     im.save(img_path)
-    # Constants for GetDeviceCaps
-    # HORZRES / VERTRES = printable area
+    
+    # HORZRES / VERTRES 代表可打印的区域，给GetDeviceCaps用
     HORZRES = 8
     VERTRES = 10
-    # LOGPIXELS = dots per inch
+    # 每英寸点数，即精度
     LOGPIXELSX = 88
     LOGPIXELSY = 90
-    # PHYSICALWIDTH/HEIGHT = total area
+    # 物理宽度和高度
     PHYSICALWIDTH = 110
     PHYSICALHEIGHT = 111
-    # PHYSICALOFFSETX/Y = left / top margin
+    # 左边距和顶端边距
     PHYSICALOFFSETX = 112
     PHYSICALOFFSETY = 113
     
-    printer_name = win32print.GetDefaultPrinter ()
+    printer_name = win32print.GetDefaultPrinter () # 获取已连接的打印机的名字
     file_name = img_path
-    # You can only write a Device-independent bitmap
-    #  directly to a Windows device context; therefore
-    #  we need (for ease) to use the Python Imaging
-    #  Library to manipulate the image.
-    #
-    # Create a device context from a named printer
-    #  and assess the printable size of the paper.
+    
+    # 可以将不依赖于设备的位图bitmap直接写入设备，因此需要使用Imaging库来生成image
+    # 从已连接的打印机获取设备信息，得到可以打印的标签的大小
     hDC = win32ui.CreateDC ()
     hDC.CreatePrinterDC (printer_name)
-    printable_area = hDC.GetDeviceCaps (HORZRES), hDC.GetDeviceCaps (VERTRES)
-    printer_size = hDC.GetDeviceCaps (PHYSICALWIDTH), hDC.GetDeviceCaps (PHYSICALHEIGHT)
-    printer_margins = hDC.GetDeviceCaps (PHYSICALOFFSETX), hDC.GetDeviceCaps (PHYSICALOFFSETY)
-    # Open the image, rotate it if it's wider than
-    #  it is high, and work out how much to multiply
-    #  each pixel by to get it as big as possible on
-    #  the page without distorting.
+    printable_area = hDC.GetDeviceCaps (HORZRES), hDC.GetDeviceCaps (VERTRES) # 获取可打印的区域
+    printer_size = hDC.GetDeviceCaps (PHYSICALWIDTH), hDC.GetDeviceCaps (PHYSICALHEIGHT) # 获取打印的大小 
+    printer_margins = hDC.GetDeviceCaps (PHYSICALOFFSETX), hDC.GetDeviceCaps (PHYSICALOFFSETY) # 获取打印的位置
+
+    # 打开图像，如果宽度大于高度，则乘以一个比例，尽量不失真
     bmp = Image.open (file_name)
     if bmp.size[0] > bmp.size[1]:
       bmp = bmp.rotate (90)
-    
     ratios = [1.0 * printable_area[0] / bmp.size[0], 1.0 * printable_area[1] / bmp.size[1]]
     scale = min (ratios)
-    # Start the print job, and draw the bitmap to
-    #  the printer device at the scaled size.
+
+    # 开始打印工作，将图片按照刚才的scaled size去打印
     hDC.StartDoc (file_name)
     hDC.StartPage ()
     
@@ -1268,55 +1278,77 @@ import serial
 import serial.tools.list_ports
  
 class DriveUART:
+    """UART驱动类
+
+    读取串口信息，主要是扫码枪使用
+    """
     def __init__(self):
-        self.connect_flag = True
-        self.hd_flag = [0,0]#硬件连接标志位
-        print("init the DriveUART")
-        mainwindow.ChildDialog.textBrowser.append("init the DriveUART")
+        self.connect_flag = True # UART软件连接标志位，输出使用
+        self.hd_flag = [0,0] # 硬件连接标志位，包括前后两个时刻的标志，用来检测拔下瞬间的下降沿，内部使用
+        print("初始化DriveUART")
+        mainwindow.ChildDialog.textBrowser.append("初始化DriveUART")
 
     def connect_uart(self):
+        """UART连接函数
+
+        判断是否硬件连接（接上串口），若是则尝试软件连接，否则提示信息
+        返回：
+            connect_flag: True表连接；False表连接失败
+        """
         plist = list(serial.tools.list_ports.comports())
-        if len(plist) <= 0:#判断端口是否硬件连接
+        # 判断端口是否硬件连接
+        if len(plist) <= 0: 
             print("没有发现端口!")
             mainwindow.ChildDialog.textBrowser.append("没有发现端口")
             self.connect_flag = False
-        else:#已硬件连接，尝试软件连接
+        # 已硬件连接，尝试软件连接
+        else: 
             plist_0 = list(plist[0])
-            serialName = plist_0[0]       #先自动检测串口， 检测到可用串口，取出串口名
+            serialName = plist_0[0] # 先自动检测串口,检测到可用串口，取出串口名，从plist_0[0]可看出目前只支持一个UART
             print("可用端口>>>",serialName)
             mainwindow.ChildDialog.textBrowser.append("可用端口>>> " + str(serialName))
-            try:#尝试软件连接
-                self.ser = serial.Serial(serialName, 115200, timeout=1)  # timeout=1s
+            # 尝试软件连接
+            try: 
+                self.ser = serial.Serial(serialName, 115200, timeout=1) # timeout=1s
                 print("已连接端口>>>", self.ser.name,"波特率115200")
                 mainwindow.ChildDialog.textBrowser.append("已连接端口>>> " + self.ser.name + " 波特率115200")
                 self.connect_flag = True
-            except:#软件连接失败，原因未知，插拔重试
+            # 软件连接失败，原因未知，插拔重试
+            except: 
                 print("尝试连接端口失败，请拔下重试，并且检查设置！")
                 mainwindow.ChildDialog.textBrowser.append("尝试连接端口失败，请拔下重试，并且检查设置！")
                 self.connect_flag = False
         return self.connect_flag
     
-    def is_connected(self):#判断端口是否硬件连接
+    def is_connected(self): 
+        """判断端口是否硬件连接
+
+        返回：已经硬件连接的端口数目
+        """
         return len(list(serial.tools.list_ports.comports()))
         
     def waitForPcbData(self): 
-        #调用函数即可，循环接收一行数据
+        """数据接受函数
+        
+        读取一数据并显示
+        """
+        # 调用函数即可，循环接收一行数据
         # while True:
         data=[0,0]
-        if (self.is_connected()):#判断端口是否硬件连接
+        if (self.is_connected()): # 判断端口是否硬件连接
             self.hd_flag[1] = 1
-            try:#硬件连接时，接受数据
-                self.line = self.ser.readline()                              #读取一行数据
+            try: # 硬件连接时，接受数据
+                self.line = self.ser.readline() # 读取一行数据
                 if len(self.line) !=0:
-                    print("Rsponse : %s" % self.line.decode('utf-8'))  #串口接收到数据，然后显示
+                    print("Rsponse : %s" % self.line.decode('utf-8')) # 串口接收到数据，然后显示
                     mainwindow.ChildDialog.textBrowser.append("Rsponse : %s" % self.line.decode('utf-8'))
                     data[0] = True
                 else:
                     data[0] = False
                     pass
                 data[1] = self.line.decode('utf-8')
-            except: #情况一：读取数据时被硬件拔掉
-                    #情况二：拔掉，重新硬件连接上后，还未软件连接
+            except: # 情况一：读取数据时被硬件拔掉
+                    # 情况二：拔掉，重新硬件连接上后，还未软件连接
                 if self.connect_uart()==False:
                     print("接受数据时串口被拔下！")
                     mainwindow.ChildDialog.textBrowser.append("接受数据时串口被拔下！")
@@ -1324,13 +1356,13 @@ class DriveUART:
                     print("端口重连成功！")
                     mainwindow.ChildDialog.textBrowser.append("端口重连成功！")
 
-        else:#无硬件连接，原有的软件连接关闭
+        else: # 无硬件连接，原有的软件连接关闭
             self.hd_flag[1]=0
-            try:#尝试关闭软件连接
+            try: # 尝试关闭软件连接
                 self.ser.close()
-            except:#第一次端口就未连接，则没有串口实例,会出现异常
+            except: # 第一次端口就未连接，则没有串口实例,会出现异常
                 pass
-            if (self.hd_flag[0]==1 and self.hd_flag[1]==0):#检测第一次硬件拔掉的下降沿，该字符只显示一次
+            if (self.hd_flag[0]==1 and self.hd_flag[1]==0): # 检测第一次硬件拔掉的下降沿，该字符只显示一次
                 print("端口硬件未连接！软件连接已关闭！")
                 mainwindow.ChildDialog.textBrowser.append("端口硬件未连接！软件连接已关闭！")
         self.hd_flag[0] = self.hd_flag[1]
@@ -1340,18 +1372,24 @@ class DriveUART:
 #       串口任务
 ##############################################################################################################
 def runuart():
+    """UART线程的任务函数
+
+    如果线程标识位为True，则不断调用读取函数，对pcb_version赋值
+    """
     global pcb_data
     global objUART
     global uart_thread_destroy_flag
     while uart_thread_destroy_flag:
         recevied_data = objUART.waitForPcbData()
         if recevied_data[0] is True:
-            pcb_data[3][1] = recevied_data[1]#获取控制板（pcb）版本，对应pcb_data的pcb_version
+            # 获取控制板（pcb）版本，对应pcb_data的pcb_version
+            pcb_data[3][1] = recevied_data[1] 
     try:
-        objUART.ser.close()#得到线程结束标识，则关闭串口
+        objUART.ser.close() # 得到线程结束标识，则关闭串口
     except:
         print("串口还没打开，不用重复关闭")
         mainwindow.ChildDialog.textBrowser.append("串口还没打开，不用重复关闭")
+
 ##############################################################################################################
 #       CAN类
 ##############################################################################################################
@@ -1359,53 +1397,58 @@ import PCANBasic
 from PCANBasic import *
 
 class DriveCAN(PCANBasic):
+    """PCAN的类
+    
+    继承自PCANBasic类
+    """
     def can_init(self,
         chanel=PCAN_USBBUS1,
         bautrate=PCAN_BAUD_500K): #默认参数：通道、波特率
+        """CAN的初始化函数
 
-        # The Plug & Play Channel (PCAN-PCI) is initialized
+        热插拔CAN的初始化
+        """
+        # 初始化可热插拔的CAN
         result = self.Initialize(chanel, bautrate)
         if result != PCAN_ERROR_OK:
-            # An error occurred, get a text describing the error and show it
+            # 错误发生，显示错误信息
             result = self.GetErrorText(result)
             print(result[1])
             mainwindow.ChildDialog.textBrowser.append(str(result[1]))
         else:
-            print("PCAN-USB (Ch-1) was initialized")
-            mainwindow.ChildDialog.textBrowser.append("PCAN-USB (Ch-1) was initialized")
+            print("PCAN-USB (Ch-1) 初始化成功")
+            mainwindow.ChildDialog.textBrowser.append("PCAN-USB (Ch-1) 初始化成功")
 
     def can_filter(self,
         chanel=PCAN_USBBUS1,
         from_id=0,to_id=0x7FF,
         fileter_mode=PCAN_MODE_STANDARD): #默认参数：通道，起始id，结束id，滤波器模式（标准）
-
-        #  The message filter is closed first to ensure the reception of the new range of IDs.
+        """CAN滤波器配置函数
+        """
+        #  先关闭CAN滤波器，以确保接受新设的ID
         result = self.SetValue(PCAN_USBBUS1,PCAN_MESSAGE_FILTER,PCAN_FILTER_CLOSE)
         if result != PCAN_ERROR_OK:
-            # An error occurred, get a text describing the error and show it
             result = self.GetErrorText(result)
             print(result[1])
             mainwindow.ChildDialog.textBrowser.append(str(result[1]))
         else:
-            # The message filter is configured to receive the IDs 2,3,4 and 5 on the PCAN-USB, Channel 1
+            # 设定滤波器的ID范围，滤波模式，CAN通道
             result = self.FilterMessages(chanel,from_id,to_id,fileter_mode)
             if result != PCAN_ERROR_OK:
-                # An error occurred, get a text describing the error and show it
                 result = objPCAN.GetErrorText(result)
                 print(result[1])
                 mainwindow.ChildDialog.textBrowser.append(result[1])
             else:
-                print("Filter successfully configured for IDs from %d to %d" % (from_id,to_id))
-                mainwindow.ChildDialog.textBrowser.append("Filter successfully configured for IDs from %d to %d" % (from_id,to_id))
+                print("CAN滤波器成功配置，ID范围从 %d 到 %d" % (from_id,to_id))
+                mainwindow.ChildDialog.textBrowser.append("CAN滤波器成功配置，ID范围从 %d 到 %d" % (from_id,to_id))
 
-    def can_read(self,chanel=PCAN_USBBUS1): #默认参数：通道
-         # All initialized channels are released
+    def can_read(self,chanel=PCAN_USBBUS1): # 默认参数：通道
+         # 所有初始化的通道被释放
         readResult = PCAN_ERROR_OK,
         if (readResult[0] & PCAN_ERROR_QRCVEMPTY) != PCAN_ERROR_QRCVEMPTY:
-            # Check the receive queue for new messages
+            # 确保接受队列可以接受新的信息
             readResult = self.Read(chanel)
             if readResult[0] != PCAN_ERROR_QRCVEMPTY:
-                # Process the received message
                 # print("id = %x data=[%x %x %x %x %x %x %x %x]" 
                 #       % (readResult[1].ID,
                 #           readResult[1].DATA[0], 
@@ -1417,15 +1460,14 @@ class DriveCAN(PCANBasic):
                 #           readResult[1].DATA[6],
                 #           readResult[1].DATA[7]))
                 self.can_processmessage(readResult[1])
-                # ProcessMessage(result[1],result[2]) # Possible processing function, ProcessMessage(msg,timestamp)
             else:
-                # An error occurred, get a text describing the error and show it
+                # 错误发生，显示信息
                 result = objPCAN.GetErrorText(readResult[0])
-                # print(result[1])
-                # HandleReadError(readResult[0]) # Possible errors handling function, HandleError(function_result)
         else:
             pass
     def can_processmessage(self,Result):
+        """CAN接受数据后的处理函数
+        """
         if Result.ID == 0x601:
             print("id = %x data=[%x %x %x %x %x %x %x %x]" 
                       % (Result.ID,
@@ -1437,7 +1479,6 @@ class DriveCAN(PCANBasic):
                           Result.DATA[5],
                           Result.DATA[6],
                           Result.DATA[7]))
-                          
         else:
             pass
    
@@ -1445,30 +1486,35 @@ class DriveCAN(PCANBasic):
         chanel=PCAN_USBBUS1,
         msg_type=PCAN_MESSAGE_STANDARD,
         frame_id=0x100,
-        send_data=[1,2,3,4]): #默认参数：通道，帧类型（标准），帧id，发送数据（列表）
-
-        msg = TPCANMsg()
+        send_data=[1,2,3,4]): # 默认参数：通道，帧类型（标准），帧id，发送数据（列表）
+        """CAN的写数据函数
+        """
+        msg = TPCANMsg()   
         msg.ID = frame_id
         msg.MSGTYPE = PCAN_MESSAGE_STANDARD
         msg.LEN = len(send_data)
-        for i in range(0,msg.LEN): #从0到len-1,如果发送数据有5位，则是0到4
+        for i in range(0,msg.LEN): # 从0到len-1,如果发送数据有5位，则是0到4
             msg.DATA[i] = send_data[i]
         
-        #  The message is sent using the PCAN-USB Channel 1
+        # 发送数据
         result = self.Write(chanel,msg)
         if result != PCAN_ERROR_OK:
-            # An error occurred, get a text describing the error and show it
+            # 错误发生，显示错误信息
             result = self.GetErrorText(result)
             print(result)
             mainwindow.ChildDialog.textBrowser.append(result)
         else:
-            print("Message sent successfully")
-            mainwindow.ChildDialog.textBrowser.append("Message sent successfully")
+            print("CAN数据发送成功")
+            mainwindow.ChildDialog.textBrowser.append("CAN数据发送成功")
 
 ##############################################################################################################
 #       CAN任务
 ##############################################################################################################
 def runcan():
+    """CAN线程执行的任务函数
+
+    如果线程标识位为True，就调用读取函数不断读取数据，否则尝试关闭CAN
+    """
     global objPCAN
     global can_thread_destroy_flag
     while can_thread_destroy_flag:
@@ -1492,6 +1538,8 @@ from usb2spi import *
 from sys import *
 
 class DriveUSB2SPI():
+    """USB2SPI类
+    """
     def __init__(self,
         config_mode = SPI_MODE_SOFT_HDX,
         config_master = SPI_MASTER,
@@ -1500,7 +1548,10 @@ class DriveUSB2SPI():
         config_lsbfirst = SPI_MSB,
         config_selpolarity = SPI_SEL_LOW,
         config_clockspeedhz = 500000):
+        """构造函数
 
+        扫描可用的SPI，配置并开启
+        """
         self.DevIndex = 0
         self.DevHandles = (c_uint * 20)()
         # 扫描设备
@@ -1541,8 +1592,8 @@ class DriveUSB2SPI():
                     
                     # 配置初始化SPI
                     SPIConfig = SPI_CONFIG()
-                    SPIConfig.Mode = config_mode      # 硬件半双工模式
-                    SPIConfig.Master = config_master    # 主机模式
+                    SPIConfig.Mode = config_mode # 硬件半双工模式
+                    SPIConfig.Master = config_master # 主机模式
                     SPIConfig.CPOL = config_cpol
                     SPIConfig.CPHA = config_cpha
                     SPIConfig.LSBFirst = config_lsbfirst
@@ -1555,7 +1606,12 @@ class DriveUSB2SPI():
                     else:
                         print("成功初始化SPI")
                         mainwindow.ChildDialog.textBrowser.append("成功初始化SPI")
+
     def spi_master_read(self):
+        """SPI主机读取函数
+        
+        读取数据并print
+        """
         self.ReadBuffer = (c_ubyte * 16)()
         self.ret = SPI_ReadBytes(self.DevHandles[self.DevIndex],SPI2_CS0,byref(self.ReadBuffer),len(self.ReadBuffer))
         if(self.ret != SPI_SUCCESS):
@@ -1571,6 +1627,8 @@ class DriveUSB2SPI():
             mainwindow.ChildDialog.textBrowser.append(" ")
 
     def spi_master_write(self):
+        """SPI主机数据发送函数
+        """
         self.WriteBuffer = (c_ubyte * 16)()
         for i in range(0,len(self.WriteBuffer)):
             self.WriteBuffer[i] = i
@@ -1583,6 +1641,8 @@ class DriveUSB2SPI():
             mainwindow.ChildDialog.textBrowser.append("SPI发送数据成功")
 
     def spi_master_write_and_read(self):
+        """SPI写读函数
+        """
         self.ret = SPI_WriteReadBytes(self.DevHandles[self.DevIndex],SPI2_CS0,byref(self.WriteBuffer),len(self.WriteBuffer),byref(self.ReadBuffer),len(self.ReadBuffer),10)
         if(self.ret != SPI_SUCCESS):
             print("SPI 写读数据失败")
@@ -1597,8 +1657,10 @@ class DriveUSB2SPI():
             mainwindow.ChildDialog.textBrowser.append("")
     
     def spi_close(self):
+        """SPI关闭函数
+        """
         self.ret = USB_CloseDevice(self.DevHandles[self.DevIndex])
-        DLL_FreeLib()#释放dll资源
+        DLL_FreeLib() # 释放dll资源，关键
         if(bool(self.ret)):
             print("成功关闭SPI设备")
             mainwindow.ChildDialog.textBrowser.append("成功关闭SPI设备")
@@ -1610,7 +1672,10 @@ class DriveUSB2SPI():
 #       向数据库pcb_data和peripheral_data写入数据
 ##############################################################################################################
 import pymysql
+
 def write_database(pcb_data):
+    """向数据库pcb_data和peripheral_data写入数据函数
+    """
     # 要写入的参数赋值
     sr_admin_name = pcb_data[1][1]
     sr_date_time = pcb_data[2][1]
@@ -1699,6 +1764,7 @@ def write_database(pcb_data):
 #       通过读取数据库administrators_data判断是否为管理员
 ##############################################################################################################
 import pymysql
+
 def is_admin(admin_name,password):
     """判断是否为已注册的管理员
     
@@ -1762,14 +1828,16 @@ def is_admin(admin_name,password):
 import pymysql
 import re
 import datetime
-def generate_pcb_numb():#对pcb_numb和date_time都赋值
+
+def generate_pcb_numb(): 
     """生成pcb_numb的函数
 
     查询数据库中的编号，分配新编号，编码格式：日期+T/F+号码（容量9999），如20200801T0001
+    对pcb_numb和date_time都赋值
     """
     global pcb_data
 
-    #从数据库获取数据
+    # 从数据库获取数据
     try:
         db = pymysql.connect("localhost","root","SR2020","sr_test")
         print("已连接数据库sr_test")
@@ -1789,12 +1857,12 @@ def generate_pcb_numb():#对pcb_numb和date_time都赋值
         print("断开连接失败，请检查设置")
         mainwindow.ChildDialog.textBrowser.append("断开连接失败，请检查设置")
     
-    #产生pcb_numb
+    # 产生pcb_numb
     now = datetime.datetime.now()
-    now_ymd = now.strftime("%Y%m%d")#获取当时的年月日
+    now_ymd = now.strftime("%Y%m%d") # 获取当时的年月日
     each_result = []*len(pcb_database_info)
-    for i in range(len(pcb_database_info)):#遍历数据库中的每个pcb_numb，将合格与否记录在each_result中
-        comp = re.match(now_ymd, pcb_database_info[i][6])#利用正则表达式比较数据库中的编码日期是否为当天
+    for i in range(len(pcb_database_info)): # 遍历数据库中的每个pcb_numb，将合格与否记录在each_result中
+        comp = re.match(now_ymd, pcb_database_info[i][6]) # 利用正则表达式比较数据库中的编码日期是否为当天
         if pcb_database_info[i][6] == "None" or comp == None:
             each_result.append('None')
         elif (comp.span() == (0,8)) and (pcb_database_info[i][4] == 'True'):
@@ -1805,9 +1873,9 @@ def generate_pcb_numb():#对pcb_numb和date_time都赋值
             print("检测pcb_numb时发现数据库内容异常，请检查")
             mainwindow.ChildDialog.textBrowser.append("检测pcb_numb时发现数据库内容异常，请检查")
 
-    pcb_data[2][1] = now.strftime("%Y-%m-%d %H:%M:%S")#为数据库的pcb_data的date_time赋值
-    if pcb_data[5][1] == "True":#当前待加入的pcb是合格的，产生合格编号否则产生不合格编号，编号格式：日期+T/F+合格/不合格编号
-        numb = each_result.count('True')+1  #如2020年8月4号第三个合格pcb的编号pcb_numb为20200804T0003
+    pcb_data[2][1] = now.strftime("%Y-%m-%d %H:%M:%S") # 为数据库的pcb_data的date_time赋值
+    if pcb_data[5][1] == "True": # 当前待加入的pcb是合格的，产生合格编号否则产生不合格编号，编号格式：日期+T/F+合格/不合格编号
+        numb = each_result.count('True')+1 # 如2020年8月4号第三个合格pcb的编号pcb_numb为20200804T0003
         if len(str(numb)) == 1:
             pcb_data[7][1] = now_ymd + "T" + "000" + str(numb)
         elif len(str(numb)) == 2:
