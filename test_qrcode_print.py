@@ -28,23 +28,23 @@ def print_barcode(imgname):
     #
     # HORZRES / VERTRES = printable area
     #
-    HORZRES = 8
-    VERTRES = 10
+    HORZRES = 10
+    VERTRES = 10#10
     #
     # LOGPIXELS = dots per inch
     #
-    LOGPIXELSX = 88
-    LOGPIXELSY = 90
+    LOGPIXELSX = 100
+    LOGPIXELSY = 100
     #
     # PHYSICALWIDTH/HEIGHT = total area
     #
     PHYSICALWIDTH = 110
-    PHYSICALHEIGHT = 111
+    PHYSICALHEIGHT = 110#111
     #
     # PHYSICALOFFSETX/Y = left / top margin
     #
     PHYSICALOFFSETX = 112
-    PHYSICALOFFSETY = 113
+    PHYSICALOFFSETY = 112#113
     
     printer_name = win32print.GetDefaultPrinter ()
     file_name = img_path
@@ -61,9 +61,11 @@ def print_barcode(imgname):
     hDC = win32ui.CreateDC ()
     hDC.CreatePrinterDC (printer_name)
     printable_area = hDC.GetDeviceCaps (HORZRES), hDC.GetDeviceCaps (VERTRES)
+    print(printable_area)
     printer_size = hDC.GetDeviceCaps (PHYSICALWIDTH), hDC.GetDeviceCaps (PHYSICALHEIGHT)
+    print(printer_size)
     printer_margins = hDC.GetDeviceCaps (PHYSICALOFFSETX), hDC.GetDeviceCaps (PHYSICALOFFSETY)
-    
+    print(printer_margins)
     #
     # Open the image, rotate it if it's wider than
     #  it is high, and work out how much to multiply
@@ -74,6 +76,8 @@ def print_barcode(imgname):
     if bmp.size[0] > bmp.size[1]:
       bmp = bmp.rotate (90)
     
+    print(bmp.size[0])
+    print(bmp.size[1])
     ratios = [1.0 * printable_area[0] / bmp.size[0], 1.0 * printable_area[1] / bmp.size[1]]
     scale = min (ratios)
     
@@ -86,13 +90,20 @@ def print_barcode(imgname):
     
     dib = ImageWin.Dib (bmp)
     scaled_width, scaled_height = [int (scale * i) for i in bmp.size]
-    scaled_width = int(scaled_width/2)
-    scaled_height = int(scaled_height/2)
-    x1 = int ((printer_size[0] - scaled_width) / 3)+100
-    y1 = int ((printer_size[1] - scaled_height) / 3)
+    print(scaled_width)
+    print(scaled_height)
+    scaled_width = int(scaled_width/3)
+    scaled_height = int(scaled_height/3)
+    # x1 = int ((printer_size[0] - scaled_width) / 3)+100
+    # y1 = int ((printer_size[1] - scaled_height) / 3)
+    x1 = int ((printer_size[0] - scaled_width) / 2)
+    y1 = int ((printer_size[1] - scaled_height) / 2)
     x2 = x1 + scaled_width
     y2 = y1 + scaled_height
+    print(x1)
+    print(y1)
     dib.draw (hDC.GetHandleOutput (), (x1, y1, x2, y2))
+
     hDC.EndPage ()
     hDC.EndDoc ()
     hDC.DeleteDC ()
