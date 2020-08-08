@@ -16,6 +16,271 @@ import qtdesigner_rc
 import version_rc
 
 ##############################################################################################################
+#       注册界面
+##############################################################################################################
+class Ui_Register_Dialog(object):
+    def setupUi(self, Register_Dialog):
+        Register_Dialog.setObjectName("Register_Dialog")
+        Register_Dialog.setWindowModality(QtCore.Qt.NonModal)
+        Register_Dialog.resize(322, 500)
+        Register_Dialog.setStyleSheet("")
+        self.centralwidget = QtWidgets.QWidget(Register_Dialog)
+        self.centralwidget.setStyleSheet("background-color: rgb(68, 68, 68);\n"
+"QPushButton{\n"
+"    border-radius:2;\n"
+"    background-color: #E1E1E1;\n"
+"    border-color:#B7B7B7;\n"
+"}\n"
+"QPushButton:hover{\n"
+"    border-radius:2;\n"
+"    background-color: #E5F1FB;\n"
+"    border-color:#B7B7B7;\n"
+"}\n"
+"QPushButton:pressed{\n"
+"    border-radius:2;\n"
+"    background-color: #CCE4F7;\n"
+"    border-color:#B7B7B7;\n"
+"}")
+        self.centralwidget.setObjectName("centralwidget")
+        self.frame = QtWidgets.QFrame(self.centralwidget)
+        self.frame.setGeometry(QtCore.QRect(0, 50, 321, 391))
+        self.frame.setStyleSheet("background-color: rgb(255, 255, 255);")
+        self.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame.setObjectName("frame")
+        self.layoutWidget = QtWidgets.QWidget(self.frame)
+        self.layoutWidget.setGeometry(QtCore.QRect(20, 0, 281, 158))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label_2 = QtWidgets.QLabel(self.layoutWidget)
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑 Light")
+        font.setPointSize(10)
+        self.label_2.setFont(font)
+        self.label_2.setObjectName("label_2")
+        self.horizontalLayout_2.addWidget(self.label_2)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.mTextUserName = QtWidgets.QLineEdit(self.layoutWidget)
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑 Light")
+        font.setPointSize(10)
+        self.mTextUserName.setFont(font)
+        self.mTextUserName.setObjectName("mTextUserName")
+        self.verticalLayout.addWidget(self.mTextUserName)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.label_3 = QtWidgets.QLabel(self.layoutWidget)
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑 Light")
+        font.setPointSize(10)
+        self.label_3.setFont(font)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_3.addWidget(self.label_3)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem1)
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
+        self.mTextPassword = QtWidgets.QLineEdit(self.layoutWidget)
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑 Light")
+        font.setPointSize(10)
+        self.mTextPassword.setFont(font)
+        self.mTextPassword.setStyleSheet("border-color: rgb(250, 0, 0);")
+        self.mTextPassword.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.mTextPassword.setObjectName("mTextPassword")
+        self.verticalLayout.addWidget(self.mTextPassword)
+        self.label_4 = QtWidgets.QLabel(self.frame)
+        self.label_4.setGeometry(QtCore.QRect(30, 183, 68, 37))
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑 Light")
+        font.setPointSize(10)
+        self.label_4.setFont(font)
+        self.label_4.setObjectName("label_4")
+        self.label_5 = QtWidgets.QLabel(self.frame)
+        self.label_5.setGeometry(QtCore.QRect(20, 180, 101, 36))
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑 Light")
+        font.setPointSize(10)
+        self.label_5.setFont(font)
+        self.label_5.setObjectName("label_5")
+        self.mTextUserName_2 = QtWidgets.QLineEdit(self.frame)
+        self.mTextUserName_2.setGeometry(QtCore.QRect(20, 240, 279, 29))
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑 Light")
+        font.setPointSize(10)
+        self.mTextUserName_2.setFont(font)
+        self.mTextUserName_2.setObjectName("mTextUserName_2")
+        self.mTextPassword_2 = QtWidgets.QLineEdit(self.frame)
+        self.mTextPassword_2.setGeometry(QtCore.QRect(20, 320, 279, 29))
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑 Light")
+        font.setPointSize(10)
+        self.mTextPassword_2.setFont(font)
+        self.mTextPassword_2.setStyleSheet("border-color: rgb(250, 0, 0);")
+        self.mTextPassword_2.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.mTextPassword_2.setObjectName("mTextPassword_2")
+        self.label_6 = QtWidgets.QLabel(self.frame)
+        self.label_6.setGeometry(QtCore.QRect(20, 270, 111, 36))
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑 Light")
+        font.setPointSize(10)
+        self.label_6.setFont(font)
+        self.label_6.setObjectName("label_6")
+        self.label_7 = QtWidgets.QLabel(self.frame)
+        self.label_7.setGeometry(QtCore.QRect(170, 160, 131, 36))
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑 Light")
+        font.setPointSize(8)
+        self.label_7.setFont(font)
+        self.label_7.setObjectName("label_7")
+        self.label_8 = QtWidgets.QLabel(self.frame)
+        self.label_8.setGeometry(QtCore.QRect(110, 350, 191, 36))
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑 Light")
+        font.setPointSize(8)
+        self.label_8.setFont(font)
+        self.label_8.setObjectName("label_8")
+        self.mBtnLogin = QtWidgets.QPushButton(self.centralwidget)
+        self.mBtnLogin.setGeometry(QtCore.QRect(220, 460, 75, 27))
+        palette = QtGui.QPalette()
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Button, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Base, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Window, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Button, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Base, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Window, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Button, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Base, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Window, brush)
+        self.mBtnLogin.setPalette(palette)
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑 Light")
+        font.setPointSize(10)
+        self.mBtnLogin.setFont(font)
+        self.mBtnLogin.setStyleSheet("QPushButton{\n"
+"    border-radius:2;\n"
+"    background-color: #E1E1E1;\n"
+"    border-color:#B7B7B7;\n"
+"}\n"
+"QPushButton:hover{\n"
+"    border-radius:2;\n"
+"    background-color: #E5F1FB;\n"
+"    border-color:#B7B7B7;\n"
+"}\n"
+"QPushButton:pressed{\n"
+"    border-radius:2;\n"
+"    background-color: #CCE4F7;\n"
+"    border-color:#B7B7B7;\n"
+"}")
+        self.mBtnLogin.setObjectName("mBtnLogin")
+        self.mBtnCancel = QtWidgets.QPushButton(self.centralwidget)
+        self.mBtnCancel.setGeometry(QtCore.QRect(130, 460, 75, 27))
+        palette = QtGui.QPalette()
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Button, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Base, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Window, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Button, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Base, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Window, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Button, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Base, brush)
+        brush = QtGui.QBrush(QtGui.QColor(225, 225, 225))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Window, brush)
+        self.mBtnCancel.setPalette(palette)
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑 Light")
+        font.setPointSize(10)
+        self.mBtnCancel.setFont(font)
+        self.mBtnCancel.setStyleSheet("QPushButton{\n"
+"    border-radius:2;\n"
+"    background-color: #E1E1E1;\n"
+"    border-color:#B7B7B7;\n"
+"}\n"
+"QPushButton:hover{\n"
+"    border-radius:2;\n"
+"    background-color: #E5F1FB;\n"
+"    border-color:#B7B7B7;\n"
+"}\n"
+"QPushButton:pressed{\n"
+"    border-radius:2;\n"
+"    background-color: #CCE4F7;\n"
+"    border-color:#B7B7B7;\n"
+"}")
+        self.mBtnCancel.setObjectName("mBtnCancel")
+        self.layoutWidget1 = QtWidgets.QWidget(self.centralwidget)
+        self.layoutWidget1.setGeometry(QtCore.QRect(20, 20, 102, 29))
+        self.layoutWidget1.setObjectName("layoutWidget1")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.layoutWidget1)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.label = QtWidgets.QLabel(self.layoutWidget1)
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑")
+        font.setPointSize(12)
+        self.label.setFont(font)
+        self.label.setStyleSheet("color: rgb(255, 255, 255);")
+        self.label.setObjectName("label")
+        self.horizontalLayout.addWidget(self.label)
+        Register_Dialog.setCentralWidget(self.centralwidget)
+
+        self.retranslateUi(Register_Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Register_Dialog)
+
+    def retranslateUi(self, Register_Dialog):
+        _translate = QtCore.QCoreApplication.translate
+        Register_Dialog.setWindowTitle(_translate("Register_Dialog", "注册"))
+        self.label_2.setText(_translate("Register_Dialog", "用户名："))
+        self.label_3.setText(_translate("Register_Dialog", "密   码："))
+        self.label_4.setText(_translate("Register_Dialog", "用户名："))
+        self.label_5.setText(_translate("Register_Dialog", "新用户名称："))
+        self.label_6.setText(_translate("Register_Dialog", "新用户密码："))
+        self.label_7.setText(_translate("Register_Dialog", "注：系统管理员的账户"))
+        self.label_8.setText(_translate("Register_Dialog", "注：可通过注册覆盖原账号密码"))
+        self.mBtnLogin.setText(_translate("Register_Dialog", "注册"))
+        self.mBtnCancel.setText(_translate("Register_Dialog", "取消"))
+        self.label.setText(_translate("Register_Dialog", "注册与修改"))
+
+##############################################################################################################
 #       登录界面.ui生成的类
 ##############################################################################################################
 class Ui_MainWindow(object):
@@ -105,6 +370,7 @@ class Ui_MainWindow(object):
         font.setFamily("微软雅黑 Light")
         self.checkBox.setFont(font)
         self.checkBox.setStyleSheet("color: rgb(255, 255, 255);")
+        self.checkBox.setChecked(True)
         self.checkBox.setObjectName("checkBox")
         self.mBtnLogin = QtWidgets.QPushButton(self.centralwidget)
         self.mBtnLogin.setGeometry(QtCore.QRect(226, 220, 75, 27))
@@ -236,7 +502,7 @@ class Ui_MainWindow(object):
         self.label_3.setText(_translate("MainWindow", "密   码："))
         self.checkBox.setText(_translate("MainWindow", "保持登录"))
         self.mBtnLogin.setText(_translate("MainWindow", "登  录"))
-        self.mBtnCancel.setText(_translate("MainWindow", "取消"))
+        self.mBtnCancel.setText(_translate("MainWindow", "注册"))
         self.label.setText(_translate("MainWindow", "登  录"))
 
 ##############################################################################################################
@@ -2172,21 +2438,25 @@ def is_admin(admin_name,password):
     for i in range(len(admin_data)):
         each_result.append((admin_name in admin_data[i]))
     result = True in each_result
+    # 用户存在
     if result == True:
-        id_admin = each_result.index(True)#记录是哪个用户
+        id_admin = each_result.index(True) # 记录是哪个用户
         print("用户 %s 存在" %admin_name)
         mainwindow.ChildDialog.textBrowser.append("用户 %s 存在" %admin_name)
-        if password == admin_data[id_admin][1]:#判断密码是否正确
+        # 用户存在，密码正确
+        if password == admin_data[id_admin][1]: # 判断密码是否正确
             allow_open[0] = True
             print("用户 %s 密码正确" % admin_name)
             mainwindow.ChildDialog.textBrowser.append("用户 %s 密码正确" % admin_name)
-            pcb_data[1][1] = admin_name#为数据库的pcb_data的管理员名字赋值
+            pcb_data[1][1] = admin_name # 为数据库的pcb_data的管理员名字赋值
             allow_open[1] = "你好管理员"
+        # 用户存在，密码错误
         else:
             allow_open[0] = False
             print("用户 %s 密码错误" % admin_name)
             mainwindow.ChildDialog.textBrowser.append("用户 %s 密码错误" % admin_name)
             allow_open[1]="用户存在，密码错误"
+    # 用户不存在
     else:
         print("用户不存在")
         mainwindow.ChildDialog.textBrowser.append("用户不存在")
@@ -2200,6 +2470,78 @@ def is_admin(admin_name,password):
         print("断开连接失败，请检查设置")
         mainwindow.ChildDialog.textBrowser.append("断开连接失败，请检查设置")
     return allow_open
+
+##############################################################################################################
+#       向数据库administrators_data注册新的管理员信息
+##############################################################################################################
+def register_admin(new_adimn_name,new_admin_password,admin_mac_address,admin_remember):
+    """向数据库administrators_data注册管理员信息
+
+    只能由已在数据库中的成员来注册，该函数也可以用来更改密码
+    """
+    # 连接数据库并获取光标
+    try:
+        db = pymysql.connect("localhost","root","SR2020","sr_test")
+        print("已连接数据库sr_test")
+        mainwindow.ChildDialog.textBrowser.append("已连接数据库sr_test")
+    except:
+        print("连接数据库sr_test失败，以下操作无效，请检查设置")
+        mainwindow.ChildDialog.textBrowser.append("连接数据库sr_test失败，以下操作无效，请检查设置")
+    cursor = db.cursor()
+
+    # 查询当前想要注册的账户是否存在
+    search_cmd = """select * from sr_test.administrators_data"""
+    cursor.execute(search_cmd)
+    admin_data = cursor.fetchall()
+    each_result = []*len(admin_data)
+    for i in range(len(admin_data)):
+        each_result.append((new_adimn_name in admin_data[i]))
+    result = True in each_result
+    # 如果账户存在，则更新账户信息
+    if result == True:
+        id_admin = each_result.index(True)
+        values = (new_admin_password,admin_mac_address,admin_remember,new_adimn_name,admin_data[id_admin][1],admin_data[id_admin][2],admin_data[id_admin][3])
+        sql="""UPDATE `sr_test`.`administrators_data` 
+                SET `administrators_password` = %s, 
+                `admin_mac_address` = %s, `admin_remember` = %s 
+                WHERE (`admin_name` = %s) 
+                and (`administrators_password` = %s) 
+                and (`admin_mac_address` = %s) and (`admin_remember` = %s)"""
+        try:
+            cursor.execute(sql,values)
+            db.commit()
+            print("成功修改账号信息")
+            mainwindow.ChildDialog.textBrowser.append("成功修改账号信息")
+        except:
+            db.rollback()
+            print("修改账号信息失败")
+            mainwindow.ChildDialog.textBrowser.append("修改账号信息失败")
+    # 账户不存在这写入新的信息
+    else:
+        # 向数据库的pcb_data表中写入数据
+        sql = """INSERT INTO `sr_test`.`administrators_data` 
+                (`admin_name`, `administrators_password`, `admin_mac_address`, `admin_remember`) 
+                VALUES (%s, %s, %s, %s)"""
+
+        values = (new_adimn_name,new_admin_password,admin_mac_address,admin_remember)
+        try:
+            cursor.execute(sql,values)
+            db.commit()
+            print("成功注册账号")
+            mainwindow.ChildDialog.textBrowser.append("成功注册账号")
+        except:
+            db.rollback()
+            print("注册账号失败")
+            mainwindow.ChildDialog.textBrowser.append("注册账号失败")
+
+    # 断开与数据库的连接
+    try:
+        db.close()
+        print("已断开与数据库sr_test的连接")
+        mainwindow.ChildDialog.textBrowser.append("已断开与数据库sr_test的连接")
+    except:
+        print("断开连接失败，请检查设置")
+        mainwindow.ChildDialog.textBrowser.append("断开连接失败，请检查设置")
 
 ##############################################################################################################
 #       读取数据库pcb_data表生成控制板PCB编号的函数
@@ -2357,6 +2699,17 @@ def draw_line_chart(pcb_numb,peripheral_type,loss_rate,error_rate,delay_time = N
 ##############################################################################################################
 #       登录界面的类
 ##############################################################################################################
+import uuid
+
+def get_mac_address():
+    """获取电脑的mac地址
+    """
+    mac=uuid.UUID(int = uuid.getnode()).hex[-12:]
+    return ":".join([mac[e:e+2] for e in range(0,11,2)])
+
+##############################################################################################################
+#       登录界面的类
+##############################################################################################################
 class MainWindow(QMainWindow,Ui_MainWindow):
     """登录界面的类
 
@@ -2370,7 +2723,12 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.mBtnCancel.clicked.connect(self.onCancelClick)
         # 要在主窗口类的初始化函数中对子窗口进行实例化，如果在其他函数中实例化子窗口
         # 可能会出现子窗口闪退的问题
-        self.ChildDialog = ChildWin()
+        self.ChildDialog = ChildWin() # 测试界面的类
+        self.RegisterDialog = RegisterWin() # 注册界面的类
+        [is_mac_existence,admin_name,password] = self.is_remenbered_admin()
+        if is_mac_existence == "True":
+            self.mTextUserName.setText(admin_name)
+            self.mTextPassword.setText(password)
    
     def onLoginClick(self):
         """登录按钮的响应函数
@@ -2380,11 +2738,22 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         admin_name = self.mTextUserName.text()
         password = self.mTextPassword.text()
         is_admin_or_not = is_admin(admin_name,password)
+        # 账户正确
         if is_admin_or_not[0] == True:
             self.exit_flag = "onLoginClick"
+            # 如果选择保持登录状态，则把PC的MAC地址写入数据库，再次打开程序的时候会检测MAC地址是否匹配，匹配则自动显示账户密码
+            if self.checkBox.isChecked():
+                admin_mac_address = get_mac_address()
+                admin_remember = "True"
+                register_admin(admin_name,password,admin_mac_address,admin_remember)
+            #不选择保持登录，则向MAC地址和是否保存写入"None"
+            else:
+                register_admin(admin_name,password,"None","None")
             self.close()
             self.ChildDialog.show()
+        # 账户不正确
         else:
+            self.exit_flag = "x"
             QMessageBox.information(None, "登录提示", is_admin_or_not[1], QMessageBox.Ok, QMessageBox.Ok)
     
     def onCancelClick(self):
@@ -2392,7 +2761,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         
         exit_flag置"x"，关闭窗口self.close()
         """
-        self.exit_flag = "x"
+        self.RegisterDialog.show()
+        self.exit_flag = "onRegisterClick"
         self.close()
 
     def closeEvent(self, event):
@@ -2428,6 +2798,133 @@ class MainWindow(QMainWindow,Ui_MainWindow):
                 event.ignore()
         else:
             event.accept()
+
+    def is_remenbered_admin(self):
+        """根据MAC地址返回账户信息
+        
+        通过数据库查询本PC的MAC地址是否存在，存在说明上次点的是保存密码，则返回对应的账户信息
+        返回：
+            is_mac_exitence：MAC地址是否存在标识符。string类型，"True"或者"False"
+            admin_name: 输入的账号名。string类型。不存在返回"None"
+            password：输入的密码。string类型。不存在返回"None"
+        """
+        global pcb_data
+        pc_mac_address = get_mac_address()
+        try:
+            db = pymysql.connect("localhost","root","SR2020","sr_test")
+            print("已连接数据库sr_test")
+            self.ChildDialog.textBrowser.append("已连接数据库sr_test")
+        except:
+            print("连接数据库sr_test失败，以下操作无效，请检查设置")
+            self.ChildDialog.textBrowser.append("连接数据库sr_test失败，以下操作无效，请检查设置")
+        cursor = db.cursor()
+        search_cmd = """select * from sr_test.administrators_data"""
+        cursor.execute(search_cmd)
+        admin_data = cursor.fetchall()
+        each_result = []*len(admin_data)
+        for i in range(len(admin_data)):
+            each_result.append((pc_mac_address in admin_data[i]))
+        result = True in each_result
+        # MAC地址存在,将账户信息返回
+        if result == True:
+            id_admin = each_result.index(True) # 记录是哪个用户
+            print("MAC地址 %s 存在" % pc_mac_address)
+            self.ChildDialog.textBrowser.append("MAC地址 %s 存在" % pc_mac_address)
+            is_mac_existence = "True"
+            admin_name = admin_data[id_admin][0]
+            password = admin_data[id_admin][1]
+            print("根据MAC地址检查到的账户，name:%s,password:%s" %(admin_name,password))
+            self.ChildDialog.textBrowser.append("根据MAC地址检查到的账户，name:%s,password:%s" %(admin_name,password))
+        # MAC地址不存在
+        else:
+            is_mac_existence = "False"
+            admin_name = "None"
+            password = "None"
+            print("MAC地址不存在")
+            self.ChildDialog.textBrowser.append("MAC地址不存在")
+        
+        try:
+            db.close()
+            print("已断开与数据库sr_test的连接")
+            self.ChildDialog.textBrowser.append("已断开与数据库sr_test的连接")
+        except:
+            print("断开连接失败，请检查设置")
+            self.ChildDialog.textBrowser.append("断开连接失败，请检查设置")
+        return [is_mac_existence,admin_name,password]
+
+
+##############################################################################################################
+#       注册界面的类
+##############################################################################################################
+class RegisterWin(QMainWindow,Ui_Register_Dialog):
+    """注册界面的类
+    """
+    exit_flag = "x"
+    def __init__(self):
+        super(RegisterWin, self).__init__()
+        self.setupUi(self)
+        self.mBtnLogin.clicked.connect(self.onLoginClick)
+        self.mBtnCancel.clicked.connect(self.onCancelClick)
+
+    def onLoginClick(self):
+        """注册按钮的响应函数
+
+        判断输入的账户信息是否存在数据库中，是则关闭登录界面、打开测试界面，否则提示原因
+        """
+        admin_name = self.mTextUserName.text()
+        password = self.mTextPassword.text()
+        new_admin_name = self.mTextUserName_2.text()
+        new_admin_password = self.mTextPassword_2.text()
+        is_admin_or_not = is_admin(admin_name,password)
+        # 如果系统管理员账户正确，则可以插入信息，否则显示错误原因
+        if is_admin_or_not[0] == True:
+            register_admin(new_admin_name,new_admin_password,"None","None")
+            self.exit_flag = "register_suscced"
+            self.close()
+        else:
+            QMessageBox.information(None, "注册提示", is_admin_or_not[1], QMessageBox.Ok, QMessageBox.Ok)
+    
+    def onCancelClick(self):
+        """取消按钮的响应函数
+        
+        """
+        self.exit_flag == "x"
+        self.close()
+
+    def closeEvent(self, event):
+        """窗口关闭响应事件
+        
+        self.close()后触发该函数
+        """
+        global uart_thread_destroy_flag
+        global can_thread_destroy_flag
+        # 注册成功提示，按下确定则退出界面
+        if self.exit_flag == "register_suscced": # 
+            # 创建一个消息盒子（提示框）
+            quitMsgBox = QMessageBox()
+            # 设置提示框的标题
+            quitMsgBox.setWindowTitle('提示信息')
+            # 设置提示框的内容
+            quitMsgBox.setText('注册成功')
+            # 创建两个点击的按钮，修改文本显示内容
+            buttonY = QPushButton('确定')
+            # 将两个按钮加到这个消息盒子中去，并指定yes和no的功能
+            quitMsgBox.addButton(buttonY, QMessageBox.YesRole)
+            quitMsgBox.exec_()
+            # 判断返回值，如果点击的是Yes按钮，我们就关闭组件和应用，否则就忽略关闭事件
+            if quitMsgBox.clickedButton() == buttonY:
+                event.accept()
+                mainwindow.exit_flag = "x" # 打开注册界面的时候，登陆界面被关闭，因此需要重新打开
+                mainwindow.show()
+            else:
+                event.ignore()
+                mainwindow.exit_flag = "x"
+                mainwindow.show()
+        else:
+            event.accept()
+            mainwindow.exit_flag = "x"
+            mainwindow.show()
+
 ##############################################################################################################
 #       测试界面的类
 ##############################################################################################################
@@ -2457,7 +2954,6 @@ class ChildWin(QMainWindow, Ui_Dialog):
         helpbar.triggered[QAction].connect(self.processtrigger)
         self.setupUi(self)
         self.retranslateUi(self)
-        # self.textBrowser.setStyleSheet("font-style:Regular,font-size:8")
         self.connect_event()
         self.mytimer()
         
