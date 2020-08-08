@@ -7,7 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+#最新
 class Ui_Register_Dialog(object):
     def setupUi(self, Register_Dialog):
         Register_Dialog.setObjectName("Register_Dialog")
