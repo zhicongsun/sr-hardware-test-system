@@ -2355,7 +2355,7 @@ def draw_line_chart(pcb_numb,peripheral_type,loss_rate,error_rate,delay_time = N
     plt.savefig(img_path,dpi=500,bbox_inches = 'tight')
 
 ##############################################################################################################
-#       主界面的类
+#       登录界面的类
 ##############################################################################################################
 class MainWindow(QMainWindow,Ui_MainWindow):
     """登录界面的类
@@ -2455,9 +2455,9 @@ class ChildWin(QMainWindow, Ui_Dialog):
         about.addAction('Standard Robots')
         # 单击任何Qmenu对象，都会发射信号，绑定槽函数
         helpbar.triggered[QAction].connect(self.processtrigger)
-        
         self.setupUi(self)
         self.retranslateUi(self)
+        # self.textBrowser.setStyleSheet("font-style:Regular,font-size:8")
         self.connect_event()
         self.mytimer()
         
@@ -2478,6 +2478,7 @@ class ChildWin(QMainWindow, Ui_Dialog):
         
     def connect_event(self):
         self.pushButton1.clicked.connect(self.onButton1Click) 
+        self.pushButton2.clicked.connect(self.onButton2Click)
 
     def onButton1Click(self):
         """"生成PDF写入数据库打印二维码"按钮的响应函数
@@ -2523,7 +2524,17 @@ class ChildWin(QMainWindow, Ui_Dialog):
         # 写入数据一次后重置为默认数据
         pcb_data = default_pcb_data.copy()
         
-        
+    def onButton2Click(self):
+        """"取消本次测试"按钮的响应函数
+
+        重置pcb_data数据
+        """
+        global pcb_data
+        global default_pcb_data
+        pcb_data = default_pcb_data.copy()
+        print("重置数据成功")
+        mainwindow.ChildDialog.textBrowser.append("重置数据成功")
+
     def mytimer(self): 
         """100ms定时器
 
