@@ -17,3 +17,4 @@ print("IP：",ip)
 mac_address = get_mac_address()
 print("Mac地址：",mac_address)
 print(type(mac_address))
+#mac
