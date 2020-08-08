@@ -191,6 +191,9 @@ QPushButton:pressed{
     <property name="text">
      <string>保持登录</string>
     </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QPushButton" name="mBtnLogin">
     <property name="geometry">
@@ -443,7 +446,7 @@ QPushButton:pressed{
 }</string>
     </property>
     <property name="text">
-     <string>取消</string>
+     <string>注册</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
