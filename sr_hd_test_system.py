@@ -511,7 +511,9 @@ class Ui_MainWindow(object):
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(1543, 643)
+        Dialog.resize(1543, 642)
+        Dialog.setMaximumSize(QtCore.QSize(1543, 642))
+        Dialog.setBaseSize(QtCore.QSize(1543, 642))
         Dialog.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         Dialog.setAutoFillBackground(False)
         # Dialog.setSizeGripEnabled(False)
@@ -536,6 +538,10 @@ class Ui_Dialog(object):
         self.groupBox_2.setObjectName("groupBox_2")
         self.textBrowser = QtWidgets.QTextBrowser(self.groupBox_2)
         self.textBrowser.setGeometry(QtCore.QRect(30, 40, 341, 221))
+        font = QtGui.QFont()
+        font.setBold(False)
+        font.setWeight(50)
+        self.textBrowser.setFont(font)
         self.textBrowser.setAutoFillBackground(False)
         self.textBrowser.setObjectName("textBrowser")
         self.progressBar = QtWidgets.QProgressBar(self.groupBox_2)
@@ -546,7 +552,7 @@ class Ui_Dialog(object):
         self.label11.setGeometry(QtCore.QRect(30, 310, 341, 51))
         font = QtGui.QFont()
         font.setFamily("微软雅黑")
-        font.setPointSize(9)
+        font.setPointSize(11)
         font.setBold(True)
         font.setWeight(75)
         self.label11.setFont(font)
@@ -566,7 +572,7 @@ class Ui_Dialog(object):
         self.groupBox_3.setFont(font)
         self.groupBox_3.setObjectName("groupBox_3")
         self.pushButton1 = QtWidgets.QPushButton(self.groupBox_3)
-        self.pushButton1.setGeometry(QtCore.QRect(50, 30, 131, 101))
+        self.pushButton1.setGeometry(QtCore.QRect(150, 50, 101, 81))
         font = QtGui.QFont()
         font.setFamily("微软雅黑")
         font.setPointSize(9)
@@ -579,11 +585,8 @@ class Ui_Dialog(object):
 "background-color: rgb(85, 170, 0);\n"
 "")
         self.pushButton1.setObjectName("pushButton1")
-        self.checkBox = QtWidgets.QCheckBox(self.groupBox_3)
-        self.checkBox.setGeometry(QtCore.QRect(10, 140, 81, 20))
-        self.checkBox.setObjectName("checkBox")
         self.pushButton2 = QtWidgets.QPushButton(self.groupBox_3)
-        self.pushButton2.setGeometry(QtCore.QRect(230, 30, 121, 101))
+        self.pushButton2.setGeometry(QtCore.QRect(270, 50, 101, 81))
         font = QtGui.QFont()
         font.setFamily("微软雅黑")
         font.setPointSize(9)
@@ -595,6 +598,19 @@ class Ui_Dialog(object):
 "background-color: rgb(255, 170, 127);\n"
 "selection-background-color: rgb(255, 0, 0);")
         self.pushButton2.setObjectName("pushButton2")
+        self.pushButton3 = QtWidgets.QPushButton(self.groupBox_3)
+        self.pushButton3.setGeometry(QtCore.QRect(30, 50, 101, 81))
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑")
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.pushButton3.setFont(font)
+        self.pushButton3.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.pushButton3.setStyleSheet("color: rgb(255, 255, 255);\n"
+"selection-background-color: rgb(255, 0, 0);\n"
+"background-color: rgb(55, 111, 167);")
+        self.pushButton3.setObjectName("pushButton3")
         self.groupBox = QtWidgets.QGroupBox(Dialog)
         self.groupBox.setGeometry(QtCore.QRect(10, 70, 331, 561))
         font = QtGui.QFont()
@@ -1522,9 +1538,10 @@ class Ui_Dialog(object):
         self.groupBox_3.setTitle(_translate("Dialog", "选项"))
         self.pushButton1.setText(_translate("Dialog", "生成PDF\n"
 "写入数据库\n"
-"打印标签"))
-        self.checkBox.setText(_translate("Dialog", "自动运行"))
+"打印标签\n"
+"打印日志"))
         self.pushButton2.setText(_translate("Dialog", "取消本次测试"))
+        self.pushButton3.setText(_translate("Dialog", "开始测试"))
         self.groupBox.setTitle(_translate("Dialog", "硬件信息"))
         self.label3.setText(_translate("Dialog", "控制器版本"))
         self.label4.setText(_translate("Dialog", "None"))
@@ -3043,7 +3060,7 @@ class ChildWin(QMainWindow, Ui_Dialog):
         """
         timer = QTimer(self)
         timer.timeout.connect(self.update)
-        timer.start(40) # ms
+        timer.start(100) # ms
         
     def update(self):
         """GUI界面的更新函数
