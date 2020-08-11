@@ -1,0 +1,18 @@
+初始化DriveUART
+可用端口>>> COM5
+已连接端口>>> COM5 波特率115200
+b'The value of a handle (PCAN-Channel, PCAN-Hardware, PCAN-Net, PCAN-Client) is invalid'
+b'A PCAN Channel has not been initialized yet or the initialization process has failed'
+已连接数据库sr_test
+用户 SZC 存在
+用户 SZC 密码正确
+已断开与数据库sr_test的连接
+已连接数据库sr_test
+已断开与数据库sr_test的连接
+生成合格编码：20200807T0018 
+pcb_numb编号：20200807T0018
+已经生成PDF，文件名为 20200807T0018.pdf，请查看！
+已连接数据库sr_test
+成功向表pcb_data中插入数据
+成功向表peripheral_data中插入数据
+已断开与数据库sr_test的连接
