@@ -1793,7 +1793,7 @@ class PDFGenerator:
         task_table = Table(self.pcb_data[1:], colWidths=[60 * mm, 120 * mm], rowHeights=12 * mm, style=self.common_style)#调整宽度高度
         story.append(task_table)
 
-        # PCB通信测试结果
+        # PCB通信测试结果，插入图片
         # UART
         story.append(Spacer(1, 20 * mm))
         img_uart_path = "./matplot_images/" + pcb_data[7][1] + "UART.png"
@@ -1907,7 +1907,7 @@ def print_barcode(imgname,pcb_type):
     scaled_width = int(scaled_width/2)
     scaled_height = int(scaled_height/2)
     x1 = int ((printer_size[0] - scaled_width) / 2)
-    y1 = int ((printer_size[1] - scaled_height) / 2)+100
+    y1 = int ((printer_size[1] - scaled_height) / 2)+100 # 100为后续调整的数据，测试值 
     x2 = x1 + scaled_width
     y2 = y1 + scaled_height
     dib.draw (hDC.GetHandleOutput (), (x1, y1, x2, y2))
@@ -2080,7 +2080,7 @@ class DriveCAN(PCANBasic):
             # 设定滤波器的ID范围，滤波模式，CAN通道
             result = self.FilterMessages(chanel,from_id,to_id,fileter_mode)
             if result != PCAN_ERROR_OK:
-                result = objPCAN.GetErrorText(result)
+                result = self.GetErrorText(result)
                 print(result[1])
                 mainwindow.ChildDialog.textBrowser.append(result[1])
             else:
@@ -2107,7 +2107,7 @@ class DriveCAN(PCANBasic):
                 self.can_processmessage(readResult[1])
             else:
                 # 错误发生，显示信息
-                result = objPCAN.GetErrorText(readResult[0])
+                result = self.GetErrorText(readResult[0])
         else:
             pass
     def can_processmessage(self,Result):
@@ -2184,6 +2184,8 @@ from sys import *
 
 class DriveUSB2SPI():
     """USB2SPI类
+
+    实现配置、写数据、读数据、写读数据，都是主机模式
     """
     def __init__(self,
         config_mode = SPI_MODE_SOFT_HDX,
@@ -2195,9 +2197,9 @@ class DriveUSB2SPI():
         config_clockspeedhz = 500000):
         """构造函数
 
-        扫描可用的SPI，配置并开启
+        扫描可用的SPI，配置并开启，注意这个函数只能打开一个SPI
         """
-        self.DevIndex = 0
+        self.DevIndex = 0 # 关键参数，设备的ID，默认只有一个设备连接，因此赋值为0
         self.DevHandles = (c_uint * 20)()
         # 扫描设备
         self.ret = USB_ScanDevice(byref(self.DevHandles))
@@ -2640,7 +2642,6 @@ def draw_line_chart(pcb_numb,peripheral_type,loss_rate,error_rate,delay_time = N
 
     将UART和CAN的测试指标分别用折线图绘制，图保存在matplot_images文件夹，命名pcb_numb + 外设类型
     参数：
-        pcb_data: PCB编码
         peripheral_type: 外设类型。string类型，"CAN" "UART"两种
         loss_rate: 丢包率，以%为单位。list类型，如[10,20,30]，10代表丢包率10%
         error_rate: 误码率，以%为单位。list类型，如[10,4,12]，10代表丢包率10%
@@ -2808,7 +2809,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             admin_name: 输入的账号名。string类型。不存在返回"None"
             password：输入的密码。string类型。不存在返回"None"
         """
-        global pcb_data
         pc_mac_address = get_mac_address()
         try:
             db = pymysql.connect("localhost","root","SR2020","sr_test")
@@ -2859,10 +2859,13 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 class RegisterWin(QMainWindow,Ui_Register_Dialog):
     """注册界面的类
     """
-    exit_flag = "x"
+    # 点击注册和取消都会调用self.close()，但两者触发的事件不同，点击注册需要出现提示窗口
+    # 因此使用exit_flag来区别，self.closeEvent()中根据exit_flag的不同做不同的处理
+    exit_flag = "x" 
     def __init__(self):
         super(RegisterWin, self).__init__()
         self.setupUi(self)
+        # 绑定响应事件
         self.mBtnLogin.clicked.connect(self.onLoginClick)
         self.mBtnCancel.clicked.connect(self.onCancelClick)
 
@@ -2871,14 +2874,16 @@ class RegisterWin(QMainWindow,Ui_Register_Dialog):
 
         判断输入的账户信息是否存在数据库中，是则关闭登录界面、打开测试界面，否则提示原因
         """
+        # 读取Text上输入的信息
         admin_name = self.mTextUserName.text()
         password = self.mTextPassword.text()
         new_admin_name = self.mTextUserName_2.text()
         new_admin_password = self.mTextPassword_2.text()
+        # 判断是否为管理员
         is_admin_or_not = is_admin(admin_name,password)
         # 如果系统管理员账户正确，则可以插入信息，否则显示错误原因
         if is_admin_or_not[0] == True:
-            register_admin(new_admin_name,new_admin_password,"None","None")
+            register_admin(new_admin_name,new_admin_password,"None","None") # 第一次注册时候默认不保存密码 
             self.exit_flag = "register_suscced"
             self.close()
         else:
@@ -2896,9 +2901,7 @@ class RegisterWin(QMainWindow,Ui_Register_Dialog):
         
         self.close()后触发该函数
         """
-        global uart_thread_destroy_flag
-        global can_thread_destroy_flag
-        # 注册成功提示，按下确定则退出界面
+        # 注册成功提示，按下“确定”或者关闭“x”则退出注册界面进入登录界面
         if self.exit_flag == "register_suscced": # 
             # 创建一个消息盒子（提示框）
             quitMsgBox = QMessageBox()
@@ -2906,20 +2909,22 @@ class RegisterWin(QMainWindow,Ui_Register_Dialog):
             quitMsgBox.setWindowTitle('提示信息')
             # 设置提示框的内容
             quitMsgBox.setText('注册成功')
-            # 创建两个点击的按钮，修改文本显示内容
+            # 创建“确定”点击的按钮，修改文本显示内容
             buttonY = QPushButton('确定')
-            # 将两个按钮加到这个消息盒子中去，并指定yes和no的功能
+            # 将“确定”按钮加到这个消息盒子中去
             quitMsgBox.addButton(buttonY, QMessageBox.YesRole)
             quitMsgBox.exec_()
-            # 判断返回值，如果点击的是Yes按钮，我们就关闭组件和应用，否则就忽略关闭事件
+            # 判断返回值，如果点击的是确定按钮则接受事件，否则就忽略事件
+            # 在这里“确定”和“x”没有区别，都是关闭注册界面，进入登录界面
             if quitMsgBox.clickedButton() == buttonY:
                 event.accept()
-                mainwindow.exit_flag = "x" # 打开注册界面的时候，登陆界面被关闭，因此需要重新打开
-                mainwindow.show()
+                mainwindow.exit_flag = "x" 
+                mainwindow.show() # 打开注册界面的时候，登陆界面被关闭，因此需要重新打开，注意调用了别的类！
             else:
                 event.ignore()
                 mainwindow.exit_flag = "x"
                 mainwindow.show()
+        # 按下注册界面的取消则执行以下内容
         else:
             event.accept()
             mainwindow.exit_flag = "x"
@@ -2982,7 +2987,7 @@ class ChildWin(QMainWindow, Ui_Dialog):
         生成pcb_numb，为封面内容的pcb_data赋值，生成外设统计图，生成PDF，写入数据库，生成并打印二维码，记录过程为txt，重置pcb_data数据
         """
         global pcb_data
-        global test_pdf
+        global objPDF
         global default_pcb_data
         _translate = QtCore.QCoreApplication.translate
         
@@ -3002,7 +3007,7 @@ class ChildWin(QMainWindow, Ui_Dialog):
         draw_line_chart(pcb_data[7][1],"UART",uart_loss,uart_error,uart_delay) # 绘制UART统计图
         draw_line_chart(pcb_data[7][1],"CAN",can_loss,can_error) # 绘制CAN统计图
         # 生成PDF
-        test_pdf.genTaskPDF(pcb_data) 
+        objPDF.genTaskPDF(pcb_data) 
         self.label11.setText(_translate("Dialog", "已生成PDF,写入数据库，生成二维码，请查看"))
         # 写入数据库
         write_database(pcb_data) 
@@ -3038,7 +3043,7 @@ class ChildWin(QMainWindow, Ui_Dialog):
         """
         timer = QTimer(self)
         timer.timeout.connect(self.update)
-        timer.start(100) # ms
+        timer.start(40) # ms
         
     def update(self):
         """GUI界面的更新函数
@@ -3319,7 +3324,7 @@ if __name__ == "__main__":
         {'report_code': 'None', 
          'task_name':'None',
          'report_date':'None',
-         'report_creator':'None'},
+         'report_creator':'None'},# 在测试界面类的onButton1Click中赋值
         ['admin_name','None'], # 在is_admin中赋值，登录时
         ['date_time','None'], # 在generate_pcb_nub中赋值，最后按下生成PDF按钮时
         ['pcb_version','None'], # 在runuart中赋值，扫码时
@@ -3371,7 +3376,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv) 
     mainwindow = MainWindow()
 
-    test_pdf = PDFGenerator()#生成PDF实例，规定PDF格式
+    objPDF = PDFGenerator()#生成PDF实例，规定PDF格式
 
     objUART = DriveUART()#生成串口实例
     objUART.connect_uart()
