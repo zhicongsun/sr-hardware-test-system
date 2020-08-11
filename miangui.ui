@@ -7,8 +7,20 @@
     <x>0</x>
     <y>0</y>
     <width>1543</width>
-    <height>643</height>
+    <height>642</height>
    </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1543</width>
+    <height>642</height>
+   </size>
+  </property>
+  <property name="baseSize">
+   <size>
+    <width>1543</width>
+    <height>642</height>
+   </size>
   </property>
   <property name="contextMenuPolicy">
    <enum>Qt::CustomContextMenu</enum>
@@ -75,6 +87,12 @@
       <height>221</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="autoFillBackground">
      <bool>false</bool>
     </property>
@@ -104,7 +122,7 @@
     <property name="font">
      <font>
       <family>微软雅黑</family>
-      <pointsize>9</pointsize>
+      <pointsize>11</pointsize>
       <weight>75</weight>
       <bold>true</bold>
      </font>
@@ -150,10 +168,10 @@ color: rgb(255, 0, 0);</string>
    <widget class="QPushButton" name="pushButton1">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>30</y>
-      <width>131</width>
-      <height>101</height>
+      <x>150</x>
+      <y>50</y>
+      <width>101</width>
+      <height>81</height>
      </rect>
     </property>
     <property name="font">
@@ -176,29 +194,17 @@ background-color: rgb(85, 170, 0);
     <property name="text">
      <string>生成PDF
 写入数据库
-打印标签</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="checkBox">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>140</y>
-      <width>81</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>自动运行</string>
+打印标签
+打印日志</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton2">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>30</y>
-      <width>121</width>
-      <height>101</height>
+      <x>270</x>
+      <y>50</y>
+      <width>101</width>
+      <height>81</height>
      </rect>
     </property>
     <property name="font">
@@ -219,6 +225,35 @@ selection-background-color: rgb(255, 0, 0);</string>
     </property>
     <property name="text">
      <string>取消本次测试</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton3">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>50</y>
+      <width>101</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+selection-background-color: rgb(255, 0, 0);
+background-color: rgb(55, 111, 167);</string>
+    </property>
+    <property name="text">
+     <string>开始测试</string>
     </property>
    </widget>
   </widget>
