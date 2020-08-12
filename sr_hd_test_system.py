@@ -1836,7 +1836,7 @@ class PDFGenerator:
         mainwindow.ChildDialog.textBrowser.append('已经生成PDF，文件名为 %s.pdf，请查看！' % self.pcb_data[7][1])
 
 ##############################################################################################################
-#       二维码打印函数
+#       标签打印函数
 ##############################################################################################################
 import win32print
 import win32ui
@@ -1850,57 +1850,95 @@ from barcode.writer import ImageWriter
 def print_barcode(imgname,pcb_type):
     """打印二维码函数
     
-    从官方的print库修改过来，可支持大部分打印机机型，功能是生成二维码图片并保存在barcode文件夹，接着调用打印机打印该二维码图片
+    可支持大部分打印机机型，功能是生成SN码图片并保存在barcode/sncode文件夹，接着调用打印机打印该SN码图片
     """
     global pcb_data
-    # 如果控制板测试通过，打印SN码
+    # 控制板测试通过
     if pcb_type == "True":
-        EAN = barcode.get_barcode_class("code128") #设置生成一维码的类型
+        # 生成二维码并保存
+        EAN = barcode.get_barcode_class("code39") #设置生成一维码的类型
         ean = EAN(imgname, writer=ImageWriter())
         img_path = os.getcwd() + "/sncode/" + imgname # 这里的路径不用自己加.png，因为EAN的save函数的特性决定的
         ean.save(img_path,
-        {'dpi':600,'text_distance':1.0,'font_size':20}) 
-        # 向SN码的顶部加入信息
-        ttfont = ImageFont.truetype("msyh.ttf",20) 
+        {'dpi':1200,'write_text':False}) 
+        # 引入中文需要的字体：微软雅黑
+        ttfont = ImageFont.truetype("msyh.ttf",180) 
+        # 取出二维码图片，准备进行放缩
         img_path = img_path + ".png"
         im = Image.open(img_path)
-        draw = ImageDraw.Draw(im)
-        draw.text((300,0),pcb_data[0]['task_name'], fill="#000000",font=ttfont)
-        im.save(img_path)
-    # 控制板测试不通过，打印二维码
+        width = im.size[0]
+        hight = im.size[1]
+        # 创建空白图片，用于粘贴条形码图片和文字图片
+        target = Image.new('RGBA', (hight*6, hight), (255, 255, 255))
+        # 按比例缩放条形码，因为条形码是1x6的，故将条形码宽度放大为原高度x6，再x2/3，即占用最终图片长度的2/3，而高度为原高度的1/2
+        width_of_sn = int (hight*6/3*2)
+        hight_of_sn = int(hight/2)
+        im = im.resize((width_of_sn,hight_of_sn),Image.ANTIALIAS)
+        # 将SN码图片加入空白图片target，(0, 0)表示x,y轴位置 单位像素 target的左上角为原点 y轴向下 
+        target.paste(im, (int((6*hight-width_of_sn)/2), 0))
+        draw = ImageDraw.Draw(target)
+        draw.text((int((6*hight)/2-width_of_sn/4),hight_of_sn+10),"SN:"+imgname, fill="#000000",font=ttfont)
+        target.save(img_path)
+    # 控制板测试不通过
     else:
-        # 生成二维码并保存在barcode文件夹，以imgname.png命名
-        img = qrcode.make(imgname)
-        img_path = os.getcwd() + "/barcode/" + imgname + ".png"
-        img.save(img_path)
-        #向二维码图片的底端中加入imgname的文字，再次保存覆盖原文件
-        ttfont = ImageFont.truetype("msyh.ttf",20) 
+        ## 不合格产品用二维码打印，去掉注释即可使用 
+        # # 生成二维码并保存在barcode文件夹，以imgname.png命名
+        # img = qrcode.make(imgname)
+        # img_path = os.getcwd() + "/barcode/" + imgname + ".png"
+        # img.save(img_path)
+        # #向二维码图片的底端中加入imgname的文字，再次保存覆盖原文件
+        # ttfont = ImageFont.truetype("msyh.ttf",20) 
+        # im = Image.open(img_path)
+        # draw = ImageDraw.Draw(im)
+        # draw.text((35,250),imgname, fill="#000000",font=ttfont)
+        # draw.text((85,0),pcb_data[0]['task_name'], fill="#000000",font=ttfont)
+        # im.save(img_path)
+
+        # 生成SN码并保存
+        EAN = barcode.get_barcode_class("code39") #设置生成一维码的类型
+        ean = EAN(imgname, writer=ImageWriter())
+        img_path = os.getcwd() + "/barcode/" + imgname # 这里的路径不用自己加.png，因为EAN的save函数的特性决定的
+        ean.save(img_path,
+        {'dpi':1200,'write_text':False}) 
+        # 引入中文需要的字体：微软雅黑
+        ttfont = ImageFont.truetype("msyh.ttf",180) 
+        # 取出二维码图片，准备进行放缩
+        img_path = img_path + ".png"
         im = Image.open(img_path)
-        draw = ImageDraw.Draw(im)
-        draw.text((35,250),imgname, fill="#000000",font=ttfont)
-        draw.text((85,0),pcb_data[0]['task_name'], fill="#000000",font=ttfont)
-        im.save(img_path)
-    
+        width = im.size[0]
+        hight = im.size[1]
+        # 创建空白图片，用于粘贴条形码图片和文字图片
+        target = Image.new('RGBA', (hight*6, hight), (255, 255, 255))
+         # 按比例缩放条形码，因为条形码是1x6的，故将条形码宽度放大为原高度x6，再x2/3，即占用最终图片长度的2/3，而高度为原高度的1/2
+        width_of_sn = int (hight*6/3*2)
+        hight_of_sn = int(hight/2)
+        im = im.resize((width_of_sn,hight_of_sn),Image.ANTIALIAS)
+        # 将SN码图片加入空白图片target，(0, 0)表示x,y轴位置 单位像素 target的左上角为原点 y轴向下 
+        target.paste(im, (int((6*hight-width_of_sn)/2), 0))
+        draw = ImageDraw.Draw(target)
+        draw.text((int((6*hight)/2-width_of_sn/4),hight_of_sn+10),"SN:"+imgname, fill="#000000",font=ttfont)
+        draw.text((width_of_sn+int((6*hight-width_of_sn)/2),int(hight_of_sn/2)),"不合格", fill="#000000",font=ttfont)
+        target.save(img_path)
+
+    # 以下为打印功能，读取图片，按比例不失真缩放，并居中打印在标签上
+    # 更改标签大小时，以下代码不需要改变，会自动读取打印机数据，只需更改打印机的配置
+    # 下面这8个参数是固定的，通过GetDeviceCaps读取WIN对应的信息
     # HORZRES / VERTRES 代表可打印的区域，给GetDeviceCaps用
     HORZRES = 8
-    VERTRES = 8#10
+    VERTRES = 10
     # 每英寸点数，即精度
-    LOGPIXELSX = 200 #88
-    LOGPIXELSY = 200 #90
+    LOGPIXELSX = 88
+    LOGPIXELSY = 90
     # 物理宽度和高度
     PHYSICALWIDTH = 110
-    PHYSICALHEIGHT = 110#111
+    PHYSICALHEIGHT = 111
     # 左边距和顶端边距
     PHYSICALOFFSETX = 112
-    PHYSICALOFFSETY = 112#113
+    PHYSICALOFFSETY = 113
     
     printer_name = win32print.GetDefaultPrinter () # 获取已连接的打印机的名字
-    if pcb_type == "True":
-        file_name = img_path + ".png"
-    else:
-        file_name = img_path
-        pass
-    
+    file_name = img_path
+
     # 可以将不依赖于设备的位图bitmap直接写入设备，因此需要使用Imaging库来生成image
     # 从已连接的打印机获取设备信息，得到可以打印的标签的大小
     hDC = win32ui.CreateDC ()
@@ -1921,17 +1959,14 @@ def print_barcode(imgname,pcb_type):
     
     dib = ImageWin.Dib (bmp)
     scaled_width, scaled_height = [int (scale * i) for i in bmp.size]
-    scaled_width = int(scaled_width/2)
-    scaled_height = int(scaled_height/2)
-    x1 = int ((printer_size[0] - scaled_width) / 2)
-    y1 = int ((printer_size[1] - scaled_height) / 2)+100 # 100为后续调整的数据，测试值 
+    x1 = int ((printer_size[0] - scaled_width) / 2) # 居中打印
+    y1 = int ((printer_size[1] - scaled_height) / 2)-5 # 5为微调的高度 
     x2 = x1 + scaled_width
     y2 = y1 + scaled_height
     dib.draw (hDC.GetHandleOutput (), (x1, y1, x2, y2))
     hDC.EndPage ()
     hDC.EndDoc ()
     hDC.DeleteDC ()
-
 
 ##############################################################################################################
 #       串口类
@@ -3012,7 +3047,7 @@ class ChildWin(QMainWindow, Ui_Dialog):
         generate_pcb_numb() 
         #封面内容赋值
         pcb_data[0]['report_code'] = pcb_data[7][1] 
-        pcb_data[0]['task_name'] = 'EU200 PCB测试'
+        pcb_data[0]['task_name'] = 'EU200'
         pcb_data[0]['report_date'] = pcb_data[2][1]
         pcb_data[0]['report_creator'] = pcb_data[1][1]
         #生成外设统计图
@@ -3252,10 +3287,10 @@ class ChildWin(QMainWindow, Ui_Dialog):
         elif (objUART.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "None"):
             self.label11.setText(_translate("Dialog", "已烧写测试固件，等待测试结果"))
         elif (objUART.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "False"):
-            self.label11.setText(_translate("Dialog", "控制器不合格，请点按钮生成报告与二维码"))
+            self.label11.setText(_translate("Dialog", "不合格，请点按钮生成报告"))
         elif ((objUART.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "True") 
              and (pcb_data[6][1] == "None")):
-            self.label11.setText(_translate("Dialog", "控制器合格，请烧录功能固件"))
+            self.label11.setText(_translate("Dialog", "合格，请烧录功能固件"))
         elif ((objUART.connect_flag == True) and (pcb_data[3][1] != "None") and(pcb_data[4][1] !="None") and (pcb_data[5][1] == "True") 
              and (pcb_data[6][1] != "None")):
             self.label11.setText(_translate("Dialog", "功能固件已烧录，请点按钮生成报告与SN码"))
@@ -3346,7 +3381,7 @@ if __name__ == "__main__":
         ['date_time','None'], # 在generate_pcb_nub中赋值，最后按下生成PDF按钮时
         ['pcb_version','None'], # 在runuart中赋值，扫码时
         ['test_firmwave_version','V0.0.1'],
-        ['qualified_or_not','False'],
+        ['qualified_or_not','True'],
         ['func_firmwave_version','V0.0.1'],
         ['pcb_numb','None'], # 在generate_pcb_nub中赋值，最后按下生成PDF按钮时
         ['io_din','1101'],
