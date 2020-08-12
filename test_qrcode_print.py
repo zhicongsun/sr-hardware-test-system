@@ -306,24 +306,16 @@ def print_barcode(imgname,pcb_type):
         im = Image.open(img_path)
         width = im.size[0]
         hight = im.size[1]
-         # 按比例缩放条形码，因为条形码是1x6的，故将条形码宽度放大为高度x6，再x2/3，即占用最终图片的2/3
-        width = int (hight*6/3*2)
-        im = im.resize((width,hight),Image.ANTIALIAS)
         # 创建空白图片，用于粘贴条形码图片和文字图片
         target = Image.new('RGBA', (hight*6, hight), (255, 255, 255))
+        # 按比例缩放条形码，因为条形码是1x6的，故将条形码宽度放大为原高度x6，再x2/3，即占用最终图片长度的2/3，而高度为原高度的1/2
+        width_of_sn = int (hight*6/3*2)
+        hight_of_sn = int(hight/2)
+        im = im.resize((width_of_sn,hight_of_sn),Image.ANTIALIAS)
         # 将SN码图片加入空白图片target，(0, 0)表示x,y轴位置 单位像素 target的左上角为原点 y轴向下 
-        target.paste(im, (0, 0))
-        # 文字图片的大小
-        width_text = hight*6-width # 空白图片除去SN码图片的剩余部分 
-        hight_text = hight
-        # 给文字图片创建空白图片并在上面写字符
-        im_text = Image.new('RGBA', (width_text, hight_text), (255, 255, 255))
-        draw = ImageDraw.Draw(im_text)
-        draw.text((0,20),"EU200", fill="#000000",font=ttfont)
-        draw.text((0,int(hight/3)),"合格", fill="#000000",font=ttfont)
-        draw.text((0,int(hight/3*2)),imgname, fill="#000000",font=ttfont)
-        # 将文字图片加入空白图片target
-        target.paste(im_text, (width,0))
+        target.paste(im, (int((6*hight-width_of_sn)/2), 0))
+        draw = ImageDraw.Draw(target)
+        draw.text((int((6*hight)/2-width_of_sn/4),hight_of_sn+10),"SN:"+imgname, fill="#000000",font=ttfont)
         target.save(img_path)
     # 控制板测试不通过
     else:
@@ -348,29 +340,22 @@ def print_barcode(imgname,pcb_type):
         {'dpi':1200,'write_text':False}) 
         # 引入中文需要的字体：微软雅黑
         ttfont = ImageFont.truetype("msyh.ttf",180) 
-        # 取出SN码图片，准备进行放缩
+        # 取出二维码图片，准备进行放缩
         img_path = img_path + ".png"
         im = Image.open(img_path)
         width = im.size[0]
         hight = im.size[1]
-         # 按比例缩放SN码，因为SN码是1x6的，故将条形码宽度放大为高度x6，再x2/3，即占用最终图片的2/3
-        width = int (hight*6/3*2)
-        im = im.resize((width,hight),Image.ANTIALIAS)
         # 创建空白图片，用于粘贴条形码图片和文字图片
         target = Image.new('RGBA', (hight*6, hight), (255, 255, 255))
-        # 图片合成paste 参数中im表示Image对象，(0, 0)表示x,y轴位置 单位像素 target的左上角为原点 y轴向下 
-        target.paste(im, (0, 0))
-        # 文字图片的大小
-        width_text = hight*6-width
-        hight_text = hight
-        # 给文字图片创建空白图片并在上面写字符
-        im_text = Image.new('RGBA', (width_text, hight_text), (255, 255, 255))
-        draw = ImageDraw.Draw(im_text)
-        draw.text((0,20),"EU200", fill="#000000",font=ttfont)
-        draw.text((0,int(hight/3)),"不合格", fill="#000000",font=ttfont)
-        draw.text((0,int(hight/3*2)),imgname, fill="#000000",font=ttfont)
-        # 将文字图片合成进入空白图片
-        target.paste(im_text, (width,0))
+         # 按比例缩放条形码，因为条形码是1x6的，故将条形码宽度放大为原高度x6，再x2/3，即占用最终图片长度的2/3，而高度为原高度的1/2
+        width_of_sn = int (hight*6/3*2)
+        hight_of_sn = int(hight/2)
+        im = im.resize((width_of_sn,hight_of_sn),Image.ANTIALIAS)
+        # 将SN码图片加入空白图片target，(0, 0)表示x,y轴位置 单位像素 target的左上角为原点 y轴向下 
+        target.paste(im, (int((6*hight-width_of_sn)/2), 0))
+        draw = ImageDraw.Draw(target)
+        draw.text((int((6*hight)/2-width_of_sn/4),hight_of_sn+10),"SN:"+imgname, fill="#000000",font=ttfont)
+        draw.text((width_of_sn+int((6*hight-width_of_sn)/2),int(hight_of_sn/2)),"不合格", fill="#000000",font=ttfont)
         target.save(img_path)
 
     # 以下为打印功能，读取图片，按比例不失真缩放，并居中打印在标签上
