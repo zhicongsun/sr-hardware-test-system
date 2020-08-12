@@ -288,7 +288,7 @@ from barcode.writer import ImageWriter
 def print_barcode(imgname,pcb_type):
     """打印二维码函数
     
-    从官方的print库修改过来，可支持大部分打印机机型，功能是生成二维码图片并保存在barcode文件夹，接着调用打印机打印该二维码图片
+    可支持大部分打印机机型，功能是生成SN码图片并保存在barcode/sncode文件夹，接着调用打印机打印该SN码图片
     """
     global pcb_data
     # 控制板测试通过
@@ -311,10 +311,10 @@ def print_barcode(imgname,pcb_type):
         im = im.resize((width,hight),Image.ANTIALIAS)
         # 创建空白图片，用于粘贴条形码图片和文字图片
         target = Image.new('RGBA', (hight*6, hight), (255, 255, 255))
-        # 图片合成paste 参数中im表示Image对象，(0, 0)表示x,y轴位置 单位像素 target的左上角为原点 y轴向下 
+        # 将SN码图片加入空白图片target，(0, 0)表示x,y轴位置 单位像素 target的左上角为原点 y轴向下 
         target.paste(im, (0, 0))
         # 文字图片的大小
-        width_text = hight*6-width
+        width_text = hight*6-width # 空白图片除去SN码图片的剩余部分 
         hight_text = hight
         # 给文字图片创建空白图片并在上面写字符
         im_text = Image.new('RGBA', (width_text, hight_text), (255, 255, 255))
@@ -322,23 +322,23 @@ def print_barcode(imgname,pcb_type):
         draw.text((0,20),"EU200", fill="#000000",font=ttfont)
         draw.text((0,int(hight/3)),"合格", fill="#000000",font=ttfont)
         draw.text((0,int(hight/3*2)),imgname, fill="#000000",font=ttfont)
-        # 将文字图片合成进入空白图片
+        # 将文字图片加入空白图片target
         target.paste(im_text, (width,0))
         target.save(img_path)
     # 控制板测试不通过
     else:
-      ## 不合格产品用二维码打印，去掉注释即可使用 
-      # # 生成二维码并保存在barcode文件夹，以imgname.png命名
-      # img = qrcode.make(imgname)
-      # img_path = os.getcwd() + "/barcode/" + imgname + ".png"
-      # img.save(img_path)
-      # #向二维码图片的底端中加入imgname的文字，再次保存覆盖原文件
-      # ttfont = ImageFont.truetype("msyh.ttf",20) 
-      # im = Image.open(img_path)
-      # draw = ImageDraw.Draw(im)
-      # draw.text((35,250),imgname, fill="#000000",font=ttfont)
-      # draw.text((85,0),pcb_data[0]['task_name'], fill="#000000",font=ttfont)
-      # im.save(img_path)
+        ## 不合格产品用二维码打印，去掉注释即可使用 
+        # # 生成二维码并保存在barcode文件夹，以imgname.png命名
+        # img = qrcode.make(imgname)
+        # img_path = os.getcwd() + "/barcode/" + imgname + ".png"
+        # img.save(img_path)
+        # #向二维码图片的底端中加入imgname的文字，再次保存覆盖原文件
+        # ttfont = ImageFont.truetype("msyh.ttf",20) 
+        # im = Image.open(img_path)
+        # draw = ImageDraw.Draw(im)
+        # draw.text((35,250),imgname, fill="#000000",font=ttfont)
+        # draw.text((85,0),pcb_data[0]['task_name'], fill="#000000",font=ttfont)
+        # im.save(img_path)
 
         # 生成SN码并保存
         EAN = barcode.get_barcode_class("code39") #设置生成一维码的类型
