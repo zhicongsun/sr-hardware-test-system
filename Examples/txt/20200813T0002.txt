@@ -1,0 +1,24 @@
+已连接数据库sr_test
+MAC地址 bc:a8:a6:df:e3:77 存在
+根据MAC地址检查到的账户，name:SR,password:SR2020
+已断开与数据库sr_test的连接
+初始化DriveUART
+没有发现端口
+b'The driver is not loaded'
+b'A PCAN Channel has not been initialized yet or the initialization process has failed'
+已连接数据库sr_test
+用户 SR 存在
+用户 SR 密码正确
+已断开与数据库sr_test的连接
+已连接数据库sr_test
+成功修改账号信息
+已断开与数据库sr_test的连接
+已连接数据库sr_test
+已断开与数据库sr_test的连接
+生成合格编码：20200813T0002 
+pcb_numb编号：20200813T0002
+已经生成PDF，文件名为 20200813T0002.pdf，请查看！
+已连接数据库sr_test
+成功向表pcb_data中插入数据
+成功向表peripheral_data中插入数据
+已断开与数据库sr_test的连接

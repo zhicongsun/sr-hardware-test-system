@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="sr_new">
+    <file>../images/sr.jpg</file>
+  </qresource>
+</RCC>

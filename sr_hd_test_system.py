@@ -12,8 +12,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import sys
-import qtdesigner_rc
-import version_rc
+import resources.qtdesigner_rc
+import resources.version_rc
 
 ##############################################################################################################
 #       注册界面
@@ -1720,7 +1720,7 @@ from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-pdfmetrics.registerFont(TTFont('pingbold', 'msyh.ttf'))
+pdfmetrics.registerFont(TTFont('pingbold', './ttf/msyh.ttf'))
 
 # 生成PDF文件
 class PDFGenerator:
@@ -1779,7 +1779,7 @@ class PDFGenerator:
         story = []
         # 首页内容
         story.append(Spacer(1, 20 * mm))
-        imgofsr = reportImage('sr_new.jpg')
+        imgofsr = reportImage('./images/sr.jpg')
         imgofsr.drawHeight = 20 * mm
         imgofsr.drawWidth = 100 * mm
         imgofsr.hAlign = TA_LEFT
@@ -1858,11 +1858,11 @@ def print_barcode(imgname,pcb_type):
         # 生成二维码并保存
         EAN = barcode.get_barcode_class("code39") #设置生成一维码的类型
         ean = EAN(imgname, writer=ImageWriter())
-        img_path = os.getcwd() + "/sncode/" + imgname # 这里的路径不用自己加.png，因为EAN的save函数的特性决定的
+        img_path = os.getcwd() + "/sncode/truecode/" + imgname # 这里的路径不用自己加.png，因为EAN的save函数的特性决定的
         ean.save(img_path,
         {'dpi':1200,'write_text':False}) 
         # 引入中文需要的字体：微软雅黑
-        ttfont = ImageFont.truetype("msyh.ttf",180) 
+        ttfont = ImageFont.truetype("./ttf/msyh.ttf",180) 
         # 取出二维码图片，准备进行放缩
         img_path = img_path + ".png"
         im = Image.open(img_path)
@@ -1897,11 +1897,11 @@ def print_barcode(imgname,pcb_type):
         # 生成SN码并保存
         EAN = barcode.get_barcode_class("code39") #设置生成一维码的类型
         ean = EAN(imgname, writer=ImageWriter())
-        img_path = os.getcwd() + "/barcode/" + imgname # 这里的路径不用自己加.png，因为EAN的save函数的特性决定的
+        img_path = os.getcwd() + "/sncode/falsecode/" + imgname # 这里的路径不用自己加.png，因为EAN的save函数的特性决定的
         ean.save(img_path,
         {'dpi':1200,'write_text':False}) 
         # 引入中文需要的字体：微软雅黑
-        ttfont = ImageFont.truetype("msyh.ttf",180) 
+        ttfont = ImageFont.truetype("./ttf/msyh.ttf",180) 
         # 取出二维码图片，准备进行放缩
         img_path = img_path + ".png"
         im = Image.open(img_path)
@@ -2090,8 +2090,8 @@ def runuart():
 ##############################################################################################################
 #       CAN类
 ##############################################################################################################
-import PCANBasic
-from PCANBasic import *
+import drivers.pcan.PCANBasic
+from drivers.pcan.PCANBasic import *
 
 class DriveCAN(PCANBasic):
     """PCAN的类
@@ -2230,8 +2230,8 @@ def runcan():
 from ctypes import *
 import platform
 from time import sleep
-from usb_device import *
-from usb2spi import *
+from drivers.usb2xxx.usb_device import *
+from drivers.usb2xxx.usb2spi import *
 from sys import *
 
 class DriveUSB2SPI():
@@ -2409,13 +2409,11 @@ def write_database(pcb_data):
     # 向数据库的pcb_data表中写入数据
     sql = """INSERT INTO `sr_test`.`pcb_data` 
             (`admin_name`, `date_time`,`pcb_version`, `test_firmwave_version`,`qualified_or_not`, `func_firmwave_version`, 
-            `pcb_numb`,`io_din`,`io_dout`,`uart115200_packet_loss_rate`,`uart115200_error_rate`,
-            `uart115200_delay_time`,`can50k_packet_loss_rate`,`can50k_error_rate`) 
-             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+            `pcb_numb`) 
+             VALUES (%s, %s, %s, %s, %s, %s, %s)"""
 
     values = (sr_admin_name,sr_date_time,sr_pcb_version,sr_test_firmwave_version,sr_qualified_or_not,sr_func_firmware_version,
-    sr_pcb_numb,sr_io_din,sr_io_dout,sr_uart115200_packet_loss_rate,sr_uart115200_error_rate,sr_uart115200_delay_time,
-    sr_can50k_packet_loss_rate,sr_can50k_error_rate)
+    sr_pcb_numb)
     try:
         cursor.execute(sql,values)
         db.commit()
